@@ -5,6 +5,10 @@ Template.rooms.helpers({
         return Rooms.find({},{
             sort: {name: 1}
         }).fetch();
+    },
+    ifIsCurrentRoom: function(){
+        if(Session.get('roomId') === this._id)
+            return "current-room";
     }
 
 });

@@ -26,11 +26,24 @@ Template.users.helpers({
         return Users.find({},{
             sort: {name: 1}
         }).fetch();
+    },
+    showUser: function(){
+        var filter = Session.get('userFilter');
+        if(!filter)
+            return true;
+        return this.name.match(filter);
+    },
+    ifIsCurrentUser: function(){
+        if(Session.get('userId') === this._id)
+            return "current-user";
     }
 });
 
 Template.users.events({
 
+    'keyup .find-user > input': function(e, tmpl){
+        Session.set('userFilter', e.currentTarget.value.trim());
+    }
 });
 
 Template.users.created = function(){

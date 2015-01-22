@@ -10,6 +10,11 @@ Template.home.helpers({
     roomName: function(){
         return Session.get('roomName');
     },
+    activeIfIsRoomOwner: function(){
+        if( !Session.get('isRoomOwner') ){
+            return 'disabled';
+        }
+    },
     visibleIfIsRoomOwner: function(){
         if( !Session.get('isRoomOwner') ){
             return 'display:none;';
@@ -42,6 +47,7 @@ Template.home.events({
 });
 
 Template.home.created = function(){
+
 
     Tracker.autorun(function(){
 
@@ -82,6 +88,7 @@ Template.home.created = function(){
         var room = Rooms.findOne({_id: Session.get('roomId')});
         if( !room) {
             Session.set("roomId", null);
+            Session.set('roomName', null);
         }else{
             Session.set('roomName', room.name);
         }

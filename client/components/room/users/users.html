@@ -6,7 +6,9 @@
         </div>
         <div class="user-list">
             {{#each users}}
-                <div class="name">{{name}}</div>
+                {{#if showUser}}
+                    <div class="name {{ifIsCurrentUser}}">{{name}}</div>
+                {{/if}}
             {{/each}}
         </div>
         <div id="map-canvas"></div>
