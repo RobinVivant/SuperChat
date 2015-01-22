@@ -2,12 +2,9 @@
 <template name="home">
     <div id="home" class="flex-col">
         <div class="header">
-            <div class="user-name">
-                {{userName}}
-            </div>
-            <div class="room-name">
-                {{roomName}}
-            </div>
+            <input type="text" class="user-name" value="{{userName}}"/>
+            <input type="text" class="room-name" value="{{roomName}}" style="{{visibleIfIsRoomOwner}}"/>
+            <input type="button" class="room-destroy" value="Delete this room" style="{{visibleIfIsRoomOwner}}"/>
         </div>
         <div class="main-container flex-row">
             <div class="panel flex-col">

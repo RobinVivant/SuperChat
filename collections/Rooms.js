@@ -4,6 +4,8 @@ Rooms = new Meteor.Collection('rooms');
 
 Rooms.allow({
     insert: function (userId, doc) {
+        if(Rooms.findOne({name: doc.name}))
+            return false;
         return true;
     },
     update: function (userId, doc, fields, modifier) {
