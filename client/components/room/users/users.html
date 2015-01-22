@@ -1,5 +1,14 @@
 
 <template name="users">
-    <div id="users">
+    <div id="users" class="flex-col">
+        <div class="find-user">
+            <input type="text" placeholder="Find User"/>
+        </div>
+        <div class="user-list">
+            {{#each users}}
+                <div class="name">{{name}}</div>
+            {{/each}}
+        </div>
+        <div id="map-canvas"></div>
     </div>
 </template>

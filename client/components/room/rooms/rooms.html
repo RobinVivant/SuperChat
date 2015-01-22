@@ -1,5 +1,13 @@
 
 <template name="rooms">
-    <div id="rooms">
+    <div id="rooms" class="flex-col">
+        <div class="create-room">
+            <input type="text" placeholder="New Room"/>
+        </div>
+        <div class="room-list">
+            {{#each rooms}}
+                <div class="name">{{name}}</div>
+            {{/each}}
+        </div>
     </div>
 </template>

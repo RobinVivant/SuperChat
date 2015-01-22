@@ -1,7 +1,7 @@
 
 
 Template.defaultLayout.created = function(){
-
+/*
   var swag = function(){
     var date = new Date();
     var h = date.getHours();
@@ -22,6 +22,7 @@ Template.defaultLayout.created = function(){
 
   setInterval(swag, 1000);
   swag();
+  */
 };
 
 

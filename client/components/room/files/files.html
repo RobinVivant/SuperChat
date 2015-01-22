@@ -1,5 +1,13 @@
 
 <template name="files">
-    <div id="files">
+    <div id="files"  class="flex-col">
+        <div class="search-file">
+            <input type="text" placeholder="Search in Files"/>
+        </div>
+        <div class="file-list">
+            {{#each files}}
+                <div class="name">{{name}}</div>
+            {{/each}}
+        </div>
     </div>
 </template>

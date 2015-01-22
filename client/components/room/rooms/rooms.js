@@ -1,6 +1,9 @@
 
 
 Template.rooms.helpers({
+    rooms: function(){
+        return [{name: "caca"}, {name: "pipi"}];
+    }
 
 });
 
