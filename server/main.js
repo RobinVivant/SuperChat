@@ -1,6 +1,8 @@
 
 Meteor.methods({
     'resetDB': function(){
+        Messages.remove({});
+        Users.remove({});
         Rooms.remove({});
     },
     'getUser': function(room, token){
@@ -13,6 +15,8 @@ Meteor.methods({
         return true;
     },
     'removeRoom': function(room, token){
+        Messages.remove({room: room});
+        Users.remove({room: room});
         Rooms.remove({owner: token, _id: room});
     },
     'updateRoomName': function(room, token, name){

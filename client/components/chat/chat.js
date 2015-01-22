@@ -11,6 +11,11 @@ Template.chat.helpers({
         if(!user)
             return;
         return user.name;
+    },
+    activeIfIsInRoom: function(){
+        if( !Session.get('roomId') ){
+            return 'disabled';
+        }
     }
 });
 

@@ -2,7 +2,7 @@
 <template name="chat">
     <div id="chat"  class="flex-col">
         <div class="console flex-col">
-            <textarea class="user-message" placeholder="Enter a new message"></textarea>
+            <textarea class="user-message" placeholder="Enter a new message" {{activeIfIsInRoom}}></textarea>
         </div>
         <div class="message-list">
             {{#each messages}}

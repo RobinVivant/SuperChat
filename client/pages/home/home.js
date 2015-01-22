@@ -57,7 +57,17 @@ Template.home.created = function(){
         Meteor.call('isRoomOwner', Session.get('roomId'), localStorage.token, function(error, result){
             Session.set('isRoomOwner', result);
         });
-
+        /*
+         if( ){
+         Users.insert({
+         room: Session.get('roomId'),
+         token: localStorage.token,
+         name: $('.user-name').val()
+         }, function(error, id) {
+         Session.set('userId', id);
+         });
+         }
+         */
         function createUser(){
             Users.insert({
                 room: Session.get('roomId'),
@@ -72,14 +82,19 @@ Template.home.created = function(){
             localStorage.token = Random.hexString(12);
             createUser();
         }else{
-            Meteor.call('getUser',  Session.get('roomId'), localStorage.token, function (error, result) {
-                if (error || !result) {
-                    createUser();
-                } else {
-                    Session.set('userId', result._id);
+            Users.update({_id: Session.get('userId')}, {
+                $set:{
+                    room : Session.get('roomId')
                 }
+            },function(){
+                Meteor.call('getUser',  Session.get('roomId'), localStorage.token, function (error, result) {
+                    if (error || !result) {
+                        createUser();
+                    } else {
+                        Session.set('userId', result._id);
+                    }
+                });
             });
-
         }
         Session.set('userToken', localStorage.token);
     });
