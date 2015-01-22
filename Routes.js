@@ -4,7 +4,14 @@ Router.configure({
     loadingTemplate: 'loading'
 });
 
-Router.route('/', function () {
-    this.render('home');
-    //this.render('loading');
+Router.route('home',{
+    template: 'home',
+    path: '/:roomId?',
+    waitOn: function () {
+        Session.set("roomId", this.params.roomId);
+        var sub = [
+            Meteor.subscribe('rooms')
+        ];
+        return sub;
+    }
 });

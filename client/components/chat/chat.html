@@ -3,11 +3,12 @@
     <div id="chat"  class="flex-col">
         <div class="message-list">
             {{#each messages}}
-                <div class="msg">{{content}}</div>
+                <div class="msg">{{userNameFromId user}} says : {{content}}</div>
             {{/each}}
         </div>
         <div class="console">
             CONSOLE
+            <input class="user-message" type="textarea"/>
         </div>
     </div>
 </template>

@@ -23,7 +23,7 @@ initMapsAPI = function(){
 
 Template.users.helpers({
     users: function(){
-        return [{name: "toto"}, {name: "tutu"}];
+        return Users.find({}).fetch();
     }
 });
 
