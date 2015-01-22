@@ -21,6 +21,8 @@ if (Meteor.isServer) {
     Users._ensureIndex({room: 1, name: 1});
 
     Meteor.publish('room-users', function(room) {
-        return Users.find({room: room}, {room: 0, token: 0});
+        return Users.find({room: room}, {
+            fields:  {room: 0, token: 0}
+        });
     });
 }

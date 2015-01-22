@@ -2,7 +2,9 @@
 
 Template.rooms.helpers({
     rooms: function(){
-        return Rooms.find({}).fetch();
+        return Rooms.find({},{
+            sort: {name: 1}
+        }).fetch();
     }
 
 });

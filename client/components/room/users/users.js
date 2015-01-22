@@ -23,7 +23,9 @@ initMapsAPI = function(){
 
 Template.users.helpers({
     users: function(){
-        return Users.find({}).fetch();
+        return Users.find({},{
+            sort: {name: 1}
+        }).fetch();
     }
 });
 

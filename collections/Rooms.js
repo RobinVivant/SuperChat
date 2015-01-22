@@ -19,6 +19,8 @@ if (Meteor.isServer) {
     Rooms._ensureIndex({_id: 1});
 
     Meteor.publish('rooms', function() {
-        return Rooms.find({},{_id:1, name:1});
+        return Rooms.find({},{
+            fields:  {_id:1, name:1}
+        });
     });
 }

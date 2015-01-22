@@ -2,7 +2,9 @@
 
 Template.chat.helpers({
     messages: function(){
-        return Messages.find({}).fetch();
+        return Messages.find({},{
+            sort: {createdAt: -1}
+        }).fetch();
     },
     userNameFromId: function(id){
         var user = Users.findOne({_id:id});
