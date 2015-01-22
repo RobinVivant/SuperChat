@@ -3,7 +3,7 @@
 Template.home.helpers({
     userName: function(){
         var user = Users.findOne({_id:Session.get('userId')});
-        if( user ){
+        if( user  && user.name == $('.user-name').val() ){
             return user.name;
         }
     },
