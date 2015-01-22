@@ -1,14 +1,15 @@
 
 <template name="chat">
     <div id="chat"  class="flex-col">
+        <div class="console">
+            CONSOLE
+            <input class="user-message" type="textarea"/>
+        </div>
         <div class="message-list">
             {{#each messages}}
                 <div class="msg">{{userNameFromId user}} says : {{content}}</div>
             {{/each}}
         </div>
-        <div class="console">
-            CONSOLE
-            <input class="user-message" type="textarea"/>
-        </div>
+
     </div>
 </template>

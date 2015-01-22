@@ -9,6 +9,7 @@
 
   .header{
     flex-basis: 3em;
+    min-height: 3em;
     -webkit-flex-basis: 3em;
     border-bottom: 1px solid black;
 
@@ -27,6 +28,10 @@
     width: 33.33%;
     float:left;
     border-right: 1px solid black;
+
+    & > *{
+      flex-grow: 1;
+    }
 
     &:last-child{
       border-right: 0;

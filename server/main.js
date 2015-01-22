@@ -2,6 +2,8 @@
 Meteor.methods({
     'resetDB': function(){
         Rooms.remove({});
+        Messages.remove({});
+        Users.remove({});
         for( var i = 0; i < 20; i++){
             Rooms.insert({
                 name: "YOLO Room "+i

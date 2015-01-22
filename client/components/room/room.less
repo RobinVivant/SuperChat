@@ -5,6 +5,7 @@
   .tabs{
     flex-basis: 3em;
     -webkit-flex-basis: 3em;
+    min-height:3em;
     width: 100%;
     background-color:red;
   }
@@ -31,9 +32,10 @@
     width: 100%;
     background-color:white;
     & > div{
-      position:absolute;
       width: 100%;
       height: 100%;
+      flex-grow: 1;
+      overflow:auto;
     }
   }
 }
