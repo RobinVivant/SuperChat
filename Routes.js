@@ -5,6 +5,6 @@ Router.configure({
 });
 
 Router.route('/', function () {
-    //this.render('home');
-    this.render('loading');
+    this.render('home');
+    //this.render('loading');
 });

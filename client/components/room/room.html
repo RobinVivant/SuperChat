@@ -1,0 +1,14 @@
+
+<template name="room">
+    <div id="room" class="flex-col">
+        <div class="tabs flex-row">
+            <div class="tab" view="map">Map</div>
+            <div class="tab" view="files">Files</div>
+            <div class="tab" view="users">Users</div>
+            <div class="tab" view="rooms">Rooms</div>
+        </div>
+        <div class="view">
+            {{> UI.dynamic template=selectedView}}
+        </div>
+    </div>
+</template>

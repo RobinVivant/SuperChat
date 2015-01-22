@@ -1,0 +1,41 @@
+#room{
+  width: 100%;
+  height: 100%;
+
+  .tabs{
+    flex-basis: 3em;
+    -webkit-flex-basis: 3em;
+    width: 100%;
+    background-color:red;
+  }
+
+  .tab{
+    flex-grow:1;
+    float:left;
+    background-color:white;
+    color: black;
+    height: 3em;
+    line-height: 3em;
+    text-align:center;
+    cursor:pointer;
+    &:hover{
+      font-weight:bold;
+    }
+    transition: all, 200ms ease;
+    box-shadow: 0 0 1em 0.05em inset;
+  }
+
+  .view{
+    flex-grow: 1;
+    -webkit-flex-grow: 1;
+    width: 100%;
+    background-color:white;
+    & > div{
+      position:absolute;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+
