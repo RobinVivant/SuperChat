@@ -1,9 +1,10 @@
 
+var cacaTimeout;
 
 Template.chat.helpers({
     messages: function(){
         return Messages.find({},{
-            sort: {createdAt: -1}
+            sort: {createdAt: 1}
         }).fetch();
     },
     userNameFromId: function(id){
@@ -16,6 +17,15 @@ Template.chat.helpers({
         if( !Session.get('roomId') ){
             return 'disabled';
         }
+    },
+    ownsMessage: function(){
+        return this.user == Session.get('userId');
+    },
+    scrollDown: function(){
+        clearTimeout(cacaTimeout);
+        cacaTimeout = setTimeout(function(){
+            $('.message-list').scrollTop($('.message-list').prop("scrollHeight"));
+        }, 200);
     }
 });
 

@@ -3,7 +3,12 @@
     <div id="chat"  class="flex-col">
         <div class="message-list">
             {{#each messages}}
-                <div class="msg">{{userNameFromId user}} says : {{content}}</div>
+                <div class="msg">
+                    <div class="{{#if ownsMessage}}myMsg {{/if}}">
+                        {{userNameFromId user}} says : {{content}}
+                    </div>
+                </div>
+                {{scrollDown}}
             {{/each}}
         </div>
         <div class="console flex-col">
