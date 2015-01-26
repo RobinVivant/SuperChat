@@ -67,48 +67,6 @@ Template.home.created = function(){
         );
     }
 
-    function createUser(){
-        navigator.geolocation.getCurrentPosition(function(pos){
-            Users.insert({
-                room: Session.get('roomId'),
-                token: localStorage.token,
-                name: $('.user-name').val(),
-                geoPos: {
-                    latitude: pos.coords.latitude,
-                    longitude: pos.coords.longitude
-                }
-            }, function(error, id) {
-                Session.set('userId', id);
-            });
-        });
-    };
-
-    if( !localStorage.token){
-        localStorage.token = Random.hexString(12);
-        createUser();
-    }else{
-        navigator.geolocation.getCurrentPosition(function(pos){
-            Users.update({_id: Session.get('userId')}, {
-                $set:{
-                    room : Session.get('roomId'),
-                    geoPos: {
-                        latitude: pos.coords.latitude,
-                        longitude: pos.coords.longitude
-                    }
-                }
-            },function(){
-                Meteor.call('getUser',  Session.get('roomId'), localStorage.token, function (error, result) {
-                    if (error || !result) {
-                        createUser();
-                    } else {
-                        Session.set('userId', result._id);
-                    }
-                });
-            });
-        });
-    }
-    Session.set('userToken', localStorage.token);
-
     Tracker.autorun(function(){
 
         Meteor.subscribe('messages', Session.get('roomId'));
@@ -117,7 +75,57 @@ Template.home.created = function(){
         Meteor.call('isRoomOwner', Session.get('roomId'), localStorage.token, function(error, result){
             Session.set('isRoomOwner', result);
         });
+
+
+        if( !Session.get('roomId') )
+            return;
+
+        var previousName = $('.user-name').val();
+
+        function createUser(){
+            navigator.geolocation.getCurrentPosition(function(pos){
+                Users.insert({
+                    room: Session.get('roomId'),
+                    token: localStorage.token,
+                    name: previousName,
+                    geoPos: {
+                        latitude: pos.coords.latitude,
+                        longitude: pos.coords.longitude
+                    }
+                }, function(error, id) {
+                    Session.set('userId', id);
+                });
+            });
+        };
+
+        if( !localStorage.token){
+            localStorage.token = Random.hexString(12);
+            createUser();
+        }else{
+            navigator.geolocation.getCurrentPosition(function(pos){
+                Users.update({_id: Session.get('userId')}, {
+                    $set:{
+                        geoPos: {
+                            latitude: pos.coords.latitude,
+                            longitude: pos.coords.longitude
+                        }
+                    }
+                },function(){
+                    Meteor.call('getUser',  Session.get('roomId'), localStorage.token, function (error, result) {
+                        if (error || !result) {
+                            createUser();
+                        } else {
+                            Session.set('userId', result._id);
+                        }
+                    });
+                });
+            });
+        }
+
     });
+
+    Session.set('userToken', localStorage.token);
+
 
     Tracker.autorun(function(){
         var room = Rooms.findOne({_id: Session.get('roomId')});
