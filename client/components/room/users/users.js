@@ -9,7 +9,7 @@ Template.users.helpers({
         var filter = Session.get('userFilter');
         if(!filter)
             return true;
-        return this.name.match(filter);
+        return this.name.match(new RegExp(filter, 'i'));
     },
     isCurrentUser: function(){
         return Session.get('userId') === this._id;
