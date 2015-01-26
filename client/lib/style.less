@@ -1,4 +1,29 @@
 
+
+.color-primary-0 { color: #236166 }	/* Main Primary color */
+.color-primary-1 { color: #000000 }
+.color-primary-2 { color: #1D2F31 }
+.color-primary-3 { color: #0E919D }
+.color-primary-4 { color: #01E9FF }
+
+.color-secondary-1-0 { color: #9B344B }	/* Main Secondary color (1) */
+.color-secondary-1-1 { color: #000000 }
+.color-secondary-1-2 { color: #4A2C33 }
+.color-secondary-1-3 { color: #EC1241 }
+.color-secondary-1-4 { color: #FF0037 }
+
+.color-secondary-2-0 { color: #539231 }	/* Main Secondary color (2) */
+.color-secondary-2-1 { color: #000000 }
+.color-secondary-2-2 { color: #33462A }
+.color-secondary-2-3 { color: #59DE11 }
+.color-secondary-2-4 { color: #59FF00 }
+
+.color-complement-0 { color: #A86D39 }	/* Main Complement color */
+.color-complement-1 { color: #000000 }
+.color-complement-2 { color: #503F30 }
+.color-complement-3 { color: #FF8213 }
+.color-complement-4 { color: #FF7800 }
+
 @import url(http://fonts.googleapis.com/css?family=Titillium+Web:600,400,300);
 
 *:not(input){
@@ -15,12 +40,35 @@ body, html{
   padding:0;
   width:100%;
   height:100%;
-  background-color: #d2d2d2;
+  border-color: #33462A !important;
+  background-color: #eeeeee;
+  transition: background-color, color, box-shadow 200ms ease;
 }
 
 *:not(i){
   font-family: 'Titillium Web', sans-serif;
   font-weight: 400;
+
+  outline:none;
+}
+
+input, textarea{
+
+  border-radius:0;
+  border:0;
+  font-size:1em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  margin:0;
+
+  &:focus{
+    box-shadow: 0 0 0.2em 0.1em black inset;
+  }
+
+  &:disabled{
+    background-color: #6e6e6e;
+    color: whitesmoke;
+  }
 }
 
 .flex-row{

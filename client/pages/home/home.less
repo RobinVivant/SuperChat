@@ -11,14 +11,19 @@
     flex-basis: 3em;
     min-height: 3em;
     -webkit-flex-basis: 3em;
-    border-bottom: 1px solid black;
-
-    & > div{
-      float:left;
-      width: 50%;
-      line-height:3em;
-      height:3em;
+    & > *{
+      margin:0;
+      border:none;
+      font-size:1.5em;
       text-align:center;
+      flex-grow: 1;
+      -webkit-flex-grow: 1;
+    }
+
+    .room-destroy{
+      background-color: #FF0037;
+      color: rgb(245, 245, 245);
+      cursor:pointer;
     }
 
   }
@@ -32,6 +37,7 @@
 
     & > *{
       flex-grow: 1;
+      -webkit-flex-grow: 1;
     }
 
     &:last-child{

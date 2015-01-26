@@ -11,6 +11,7 @@
 
   .tab{
     flex-grow:1;
+    -webkit-flex-grow: 1;
     float:left;
     color: black;
     height: 3em;
@@ -21,12 +22,14 @@
       font-weight:bold;
     }
     transition: all, 200ms ease;
-    box-shadow: 0 0 1em 0.05em inset;
+    background-color: #0E919D;
   }
 
   .tab-selected{
     color: white;
-    background-color: black;
+    font-weight:bold;
+    background-color: #236166;
+    box-shadow: 0 0 0.3em 0 black inset;
   }
 
   .view{
@@ -37,6 +40,7 @@
       width: 100%;
       height: 100%;
       flex-grow: 1;
+      -webkit-flex-grow: 1;
       overflow:auto;
     }
   }

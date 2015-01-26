@@ -1,31 +1,9 @@
 
-var map;
-
-initMapsAPI = function(){
-
-    navigator.geolocation.getCurrentPosition(function(pos){
-        var myLatlng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
-
-        var mapOptions = {
-            zoom: 8,
-            center: myLatlng
-        }
-        map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-
-        var marker = new google.maps.Marker({
-            position: myLatlng,
-            map: map,
-            title:"CACA !"
-        });
-    });
-
-};
-
 Template.users.helpers({
     users: function(){
         return Users.find({},{
             sort: {name: 1}
-        }).fetch();
+        });
     },
     showUser: function(){
         var filter = Session.get('userFilter');
@@ -33,28 +11,57 @@ Template.users.helpers({
             return true;
         return this.name.match(filter);
     },
-    ifIsCurrentUser: function(){
-        if(Session.get('userId') === this._id)
-            return "current-user";
+    isCurrentUser: function(){
+        return Session.get('userId') === this._id;
+    },
+    isSelectedUser: function(){
+        return Session.get('selectedUser') === this._id;
     }
 });
 
 Template.users.events({
-
+    'click .user-list > div': function(e, tmpl){
+        Session.set('selectedUser', this._id);
+    },
     'keyup .find-user > input': function(e, tmpl){
         Session.set('userFilter', e.currentTarget.value.trim());
     }
+
 });
 
+var userMap;
+
 Template.users.created = function(){
-    if(!window.google){
-        $.cachedScript( "//maps.googleapis.com/maps/api/js?key=AIzaSyA3CdM0aZAJd_QfZVfgw5hUlbPBuRIcrrQ&callback=initMapsAPI")
-            .fail(function( jqxhr, settings, exception ) {
-                $( "#map-canvas" ).text("Error while loading map : ");
+
+    Session.set('selectedUser', Session.get("userId"));
+
+    Tracker.autorun(function() {
+        var user = Users.findOne({_id: Session.get('selectedUser')});
+        if( !user || !Session.get('maps-api-loaded') )
+            return;
+
+        if( Session.get('maps-api-loaded') ) {
+            var userPos = new google.maps.LatLng(user.geoPos.latitude, user.geoPos.longitude);
+            var marker = new google.maps.Marker({
+                position: userPos ,
+                map: userMap,
+                title: user.name
             });
-    }else{
-        Meteor.defer(initMapsAPI);
-    }
+            userMap.setCenter(userPos);
+        }
+    });
+
+    Tracker.autorun(function(){
+        if( Session.get('maps-script-loaded') ) {
+            Meteor.defer(function(){
+                userMap = new google.maps.Map(document.getElementById("map-canvas"), {
+                    zoom: 8,
+                    center: new google.maps.LatLng(0, 0)
+                });
+                Session.set('maps-api-loaded', true);
+            });
+        }
+    });
 };
 
 

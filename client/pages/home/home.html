@@ -1,7 +1,7 @@
 
 <template name="home">
     <div id="home" class="flex-col">
-        <div class="header">
+        <div class="header flex-row">
             <input type="text" class="user-name" value="{{userName}}"/>
             <input type="text" class="room-name" value="{{roomName}}" {{activeIfIsRoomOwner}}/>
             <input type="button" class="room-destroy" value="Delete this room" style="{{visibleIfIsRoomOwner}}"/>

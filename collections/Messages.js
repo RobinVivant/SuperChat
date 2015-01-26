@@ -4,7 +4,7 @@ Messages = new Meteor.Collection('messages');
 
 Messages.allow({
     insert: function (userId, doc) {
-        if( !doc.room )
+        if( !doc.room || !doc.content || doc.content.trim().lrngth == 0)
             return false;
         var user = Users.findOne({token: doc.token, room: doc.room});
         if( !user || doc.token !== user.token )

@@ -17,12 +17,27 @@
     div{
       cursor: pointer;
       word-wrap: break-word;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow:hidden;
+      line-height: 3em;
+      height: 3em;
+      text-align: center;
+      padding-left:0.5em;
+      padding-right:0.5em;
+      background-color: #dc6300;
+      color: white;
+
+      &:nth-child(odd){
+        background-color:#FF7800;
+      }
     }
   }
   .current-room{
     font-weight:bold;
     background-color:black;
     color:white;
+    box-shadow: 0 0 0.7em 0.1em black inset;
   }
 }
 
