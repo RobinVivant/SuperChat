@@ -2,8 +2,9 @@
 var cacaTimeout;
 var loadingChatHistory = false;
 var firstElem;
+var allMessagesLoaded = false;
 
-function toJSONLocal (date) {
+function toLocalTime (date) {
     var local = new Date(date);
     local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
     return local.getHours()+':'+local.getMinutes();
@@ -35,16 +36,24 @@ Template.chat.helpers({
             if(loadingChatHistory){
                 loadingChatHistory = false;
                 if( firstElem ){
-                    $('.message-list').scrollTop(firstElem.position().top-40);
+                    $('.message-list').scrollTop(firstElem.position().top-140);
                     firstElem = null;
                 }
-                return;
+            }else{
+                $('.message-list').scrollTop($('.message-list').prop("scrollHeight"));
             }
-            $('.message-list').scrollTop($('.message-list').prop("scrollHeight"));
+            $('.message-list').velocity('stop').velocity({
+                properties:{
+                    opacity:[1, 0]
+                }, options:{
+                    duration: 200
+                }
+            });
+
         }, 200);
     },
     formatDate: function(timestamp){
-        return toJSONLocal(new Date(timestamp));
+        return toLocalTime(new Date(timestamp));
     }
 });
 
@@ -64,8 +73,15 @@ Template.chat.events({
         }
     },
     'scroll .message-list': function(e, tmpl){
-        if($(e.currentTarget).scrollTop() == 0 && !firstElem){
+        if($(e.currentTarget).scrollTop() < 100 && !firstElem && !allMessagesLoaded){
             loadingChatHistory = true;
+            $('.message-list').velocity('stop').velocity({
+                properties: {
+                    opacity: [0, 1]
+                }, options:{
+                    duration: 200
+                }
+            });
             firstElem = $(e.currentTarget).children().first();
             Session.set('chatCursorPosition', Session.get('chatCursorPosition')+10 );
         }
@@ -76,6 +92,14 @@ Template.chat.created = function(){
 
     Tracker.autorun(function() {
         Session.get('roomId');
+        allMessagesLoaded = false;
+        $('.message-list').velocity('stop').velocity({
+            properties: {
+                opacity: [0, 1]
+            }, options:{
+                duration: 200
+            }
+        });
         $('.message-list').scrollTop($('.message-list').prop("scrollHeight"));
         Session.set('chatCursorPosition', Math.round($(window).height() / 35));
     });
@@ -85,6 +109,9 @@ Template.chat.created = function(){
         if( room) {
             Meteor.subscribe('messages', Session.get('roomId'), Math.round(Math.max(0, room.msgCount-Session.get('chatCursorPosition'))), Session.get('chatCursorPosition'), {
                 onReady: function () {
+                    if( room.msgCount <= Session.get('chatCursorPosition') ){
+                        allMessagesLoaded = true;
+                    }
                     Session.set('subsReadyCount', Session.get('subsReadyCount') + 1);
                 }
             });
