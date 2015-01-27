@@ -28,10 +28,12 @@ if (Meteor.isServer) {
 
     Messages._ensureIndex({room: 1});
 
-    Meteor.publish('messages', function(room) {
+    Meteor.publish('messages', function(room, offset, limit) {
         return Messages.find({room: room}, {
             fields:  {room: 0},
-            sort: {createdAt: 1}
+            sort: {createdAt: 1},
+            skip: offset,
+            limit: limit
         });
     });
 }

@@ -1,5 +1,7 @@
 
 var cacaTimeout;
+var loadingChatHistory = false;
+var firstElem;
 
 function toJSONLocal (date) {
     var local = new Date(date);
@@ -30,6 +32,14 @@ Template.chat.helpers({
     scrollDown: function(){
         clearTimeout(cacaTimeout);
         cacaTimeout = setTimeout(function(){
+            if(loadingChatHistory){
+                loadingChatHistory = false;
+                if( firstElem ){
+                    $('.message-list').scrollTop(firstElem.position().top-40);
+                    firstElem = null;
+                }
+                return;
+            }
             $('.message-list').scrollTop($('.message-list').prop("scrollHeight"));
         }, 200);
     },
@@ -54,16 +64,26 @@ Template.chat.events({
         }
     },
     'scroll .message-list': function(e, tmpl){
-
+        if($(e.currentTarget).scrollTop() == 0 && !firstElem){
+            loadingChatHistory = true;
+            firstElem = $(e.currentTarget).children().first();
+            Session.set('chatCursorPosition', Session.get('chatCursorPosition')+10 );
+        }
     }
 });
 
 Template.chat.created = function(){
 
     Tracker.autorun(function() {
+        Session.get('roomId');
+        $('.message-list').scrollTop($('.message-list').prop("scrollHeight"));
+        Session.set('chatCursorPosition', Math.round($(window).height() / 35));
+    });
+
+    Tracker.autorun(function() {
         var room = Rooms.findOne({_id:Session.get('roomId')});
         if( room) {
-            Meteor.subscribe('messages', Session.get('roomId'), {
+            Meteor.subscribe('messages', Session.get('roomId'), Math.round(Math.max(0, room.msgCount-Session.get('chatCursorPosition'))), Session.get('chatCursorPosition'), {
                 onReady: function () {
                     Session.set('subsReadyCount', Session.get('subsReadyCount') + 1);
                 }
