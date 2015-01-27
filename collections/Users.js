@@ -4,7 +4,7 @@ Users = new Meteor.Collection('room_users');
 
 Users.allow({
     insert: function (userId, doc) {
-        if( !doc.name || Users.findOne({name: doc.name.trim(), room: doc.room}) )
+        if( Users.findOne({name: doc.name && doc.name.trim(), room: doc.room}) )
             return;
         if( doc.name.trim().length == 0 )
             doc.name = 'User_'+Random.hexString(6);

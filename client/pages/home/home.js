@@ -57,6 +57,8 @@ Template.home.events({
     }
 });
 
+Session.setDefault('subsReadyCount', 0);
+
 Template.home.created = function(){
 
     if(!window.google){
@@ -67,15 +69,27 @@ Template.home.created = function(){
         );
     }
 
+    Tracker.autorun(function() {
+        Session.set('subsReadyCount', 0);
+
+        Meteor.subscribe('room-users', Session.get('roomId'), {
+            onReady: function () {
+                Session.set('subsReadyCount', Session.get('subsReadyCount')+1);
+            }
+        });
+    });
+
     Tracker.autorun(function(){
 
-        Meteor.subscribe('messages', Session.get('roomId'));
-        Meteor.subscribe('room-users', Session.get('roomId'));
+        if( Session.get('subsReadyCount') >= 2 ){
+            Session.set('subsReadyCount', 0);
+        }else{
+            return;
+        }
 
         Meteor.call('isRoomOwner', Session.get('roomId'), localStorage.token, function(error, result){
             Session.set('isRoomOwner', result);
         });
-
 
         if( !Session.get('roomId') )
             return;

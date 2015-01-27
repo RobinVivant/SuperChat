@@ -5,14 +5,16 @@
             {{#each messages}}
                 <div class="msg">
                     <div class="{{#if ownsMessage}}myMsg {{/if}}">
-                        {{userNameFromId user}} says : {{content}}
+                        <div class="message-user">{{userNameFromId user}}</div>
+                        <div class="message-content">{{content}}</div>
+                        <div class="message-date">{{formatDate createdAt}}</div>
                     </div>
                 </div>
                 {{scrollDown}}
             {{/each}}
         </div>
         <div class="console flex-col">
-            <textarea class="user-message" {{activeIfIsInRoom}} value="Yolo !"></textarea>
+            <textarea class="user-message" {{activeIfIsInRoom}} placeholder="Yolo !"></textarea>
         </div>
     </div>
 </template>

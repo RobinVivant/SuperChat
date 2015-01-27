@@ -8,6 +8,7 @@ Rooms.allow({
             return false;
         if(Rooms.findOne({name: doc.name}))
             return false;
+        doc.msgCount = 0;
         return true;
     },
     update: function (userId, doc, fields, modifier) {
@@ -24,7 +25,7 @@ if (Meteor.isServer) {
 
     Meteor.publish('rooms', function() {
         return Rooms.find({},{
-            fields:  {_id:1, name:1}
+            fields:  {_id:1, name:1, msgCount: 1}
         });
     });
 }

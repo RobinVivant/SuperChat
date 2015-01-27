@@ -4,11 +4,15 @@ Messages = new Meteor.Collection('messages');
 
 Messages.allow({
     insert: function (userId, doc) {
-        if( !doc.room || !doc.content || doc.content.trim().lrngth == 0)
+        if( !doc.room || !doc.content || doc.content.trim().length == 0)
             return false;
         var user = Users.findOne({token: doc.token, room: doc.room});
         if( !user || doc.token !== user.token )
             return false;
+
+        Rooms.update({_id:doc.room},{
+            $inc : { msgCount : 1}
+        });
         doc.createdAt = new Date().valueOf();
         return true;
     },
@@ -27,7 +31,7 @@ if (Meteor.isServer) {
     Meteor.publish('messages', function(room) {
         return Messages.find({room: room}, {
             fields:  {room: 0},
-            sort: {createdAt: -1}
+            sort: {createdAt: 1}
         });
     });
 }
