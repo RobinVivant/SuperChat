@@ -165,6 +165,8 @@ Template.chat.helpers({
     getContent: function(){
         if( this.type == 'link' ){
             return Spacebars.SafeString('<a href="'+this.linkUrl+'" target="blank">'+this.linkName+'</a>');
+        }else if (this.type == 'snapshot'){
+            return Spacebars.SafeString('<img class="message-img" src="'+this.content+'">');
         }else{
             return this.content
         }

@@ -16,7 +16,7 @@
         <div class="console flex-col">
             <div class="user-message-tools flex-col">
                 <input type="file" id="filePicker"/>
-                <div class="fileUploadButton">
+                <div class="fileUploadButton {{activeIfIsInRoom}}">
                     {{#if isFileUploading}}
                         Uploading...
                     {{else}}

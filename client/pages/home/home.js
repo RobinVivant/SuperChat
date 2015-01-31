@@ -52,6 +52,15 @@ Session.setDefault('subsReadyCount', 0);
 
 Template.home.created = function(){
 
+    Meteor.defer(function(){
+        function doIt(){
+            $('.main-container').height($(window).height()-$('.header').height());
+        }
+        $(window).on('resize', doIt);
+        doIt();
+    });
+
+
     Tracker.autorun(function() {
         Session.set('subsReadyCount', 0);
 
