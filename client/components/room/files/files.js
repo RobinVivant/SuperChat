@@ -2,7 +2,7 @@
 
 Template.files.helpers({
     files: function(){
-        return [{name: "file 1"}, {name: "file 2"}];
+        return Files.find();
     }
 });
 
@@ -11,7 +11,12 @@ Template.files.events({
 });
 
 Template.files.created = function(){
-
+    Tracker.autorun(function() {
+        var room = Rooms.findOne({_id: Session.get('roomId')});
+        if (room) {
+            Meteor.subscribe('files', Session.get('roomId'));
+        }
+    });
 };
 
 

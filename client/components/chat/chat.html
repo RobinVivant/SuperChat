@@ -6,7 +6,7 @@
                 <div class="msg">
                     <div class="{{#if ownsMessage}}myMsg {{/if}}">
                         <div class="message-user">{{userNameFromId user}}</div>
-                        <div class="message-content">{{content}}</div>
+                        <div class="message-content">{{getContent}}</div>
                         <div class="message-date">{{formatDate createdAt}}</div>
                     </div>
                 </div>
@@ -14,6 +14,16 @@
             {{/each}}
         </div>
         <div class="console flex-col">
+            <div class="user-message-tools flex-col">
+                <input type="file" id="filePicker"/>
+                <div class="fileUploadButton">
+                    {{#if isFileUploading}}
+                        Uploading...
+                    {{else}}
+                        Send A file
+                    {{/if}}
+                </div>
+            </div>
             <textarea class="user-message" {{activeIfIsInRoom}} placeholder="Yolo !"></textarea>
         </div>
     </div>

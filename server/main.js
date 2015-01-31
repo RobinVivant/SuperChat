@@ -17,6 +17,7 @@ Meteor.methods({
     'removeRoom': function(room, token){
         Messages.remove({room: room});
         Users.remove({room: room});
+        Files.remove({room: room});
         Rooms.remove({owner: token, _id: room});
     },
     'updateRoomName': function(room, token, name){

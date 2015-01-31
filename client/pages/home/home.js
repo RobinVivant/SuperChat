@@ -1,13 +1,4 @@
 
-Session.setDefault('maps-api-loaded', false);
-Session.setDefault('maps-script-loaded', false);
-
-initMapsAPI = function(){
-    Meteor.defer(function(){
-        Session.set('maps-script-loaded', true);
-    });
-};
-
 Template.home.helpers({
     userName: function(){
         var user = Users.findOne({_id:Session.get('userId')});
@@ -60,14 +51,6 @@ Template.home.events({
 Session.setDefault('subsReadyCount', 0);
 
 Template.home.created = function(){
-
-    if(!window.google){
-        $.cachedScript( "//maps.googleapis.com/maps/api/js?key=AIzaSyA3CdM0aZAJd_QfZVfgw5hUlbPBuRIcrrQ&callback=initMapsAPI")
-            .fail(function( jqxhr, settings, exception ) {
-                console('error initializing maps api', exception);
-            }
-        );
-    }
 
     Tracker.autorun(function() {
         Session.set('subsReadyCount', 0);

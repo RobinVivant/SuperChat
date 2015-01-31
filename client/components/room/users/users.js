@@ -1,4 +1,5 @@
 
+
 Template.users.helpers({
     users: function(){
         return Users.find({},{
@@ -29,6 +30,8 @@ Template.users.events({
 
 });
 
+
+Session.setDefault('maps-api-loaded', false);
 var userMap;
 
 Template.users.created = function(){
