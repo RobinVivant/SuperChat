@@ -6,7 +6,9 @@
         </div>
         <div class="file-list">
             {{#each files}}
-                <a href="{{url}}" target="blank" class="name">{{name}}</a>
+                {{#if showFile}}
+                    <a href="{{url}}" target="blank" class="name">{{name}}</a>
+                {{/if}}
             {{/each}}
         </div>
     </div>
