@@ -8,7 +8,7 @@ Template.users.helpers({
     },
     showUser: function(){
         var filter = Session.get('userFilter');
-        if(!filter)
+        if(!filter  || filter.trim().length == 0)
             return true;
         return this.name.match(new RegExp(filter, 'i'));
     },

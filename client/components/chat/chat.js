@@ -164,7 +164,7 @@ Template.chat.helpers({
     },
     getContent: function(){
         if( this.type == 'link' ){
-            return Spacebars.SafeString('<a href="'+this.linkUrl+'" target="blank">'+this.linkName+'</a>');
+            return Spacebars.SafeString('<a href="'+this.linkUrl+'&export=download" target="blank">'+this.linkName+'</a>');
         }else{
             return this.content
         }

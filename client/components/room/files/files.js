@@ -6,9 +6,12 @@ Template.files.helpers({
     },
     showFile: function(){
         var filter = Session.get('fileFilter');
-        if(!filter)
+        if(!filter || filter.trim().length == 0)
             return true;
-        return this.name.match(new RegExp(filter, 'i'));
+        return (Users.findOne({_id: this.user}).name+" "+this.name).match(new RegExp(filter, 'i'));
+    },
+    getUserName: function(){
+        return Users.findOne({_id: this.user}).name;
     }
 });
 
