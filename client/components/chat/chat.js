@@ -138,7 +138,6 @@ Template.chat.helpers({
         return this.user == Session.get('userId');
     },
     sendingMessage: function(){
-        console.log(Session.get('sendingMessage'));
         return Session.get('sendingMessage');
     },
     scrollDown: function(){
