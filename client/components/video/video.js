@@ -12,19 +12,11 @@ Template.video.events({
 
         $('.videoContainer').velocity('stop').velocity({
             properties : {
-                scale: '0'
+                scale: 0.5
             }, options:{
                 duration: 200,
-                easing: 'spring',
-                complete: function(){
-                    $('.videoContainer').velocity('reverse',{
-                        options:{
-                            complete: function(){
-                                $('.videoContainer').css('scale', 0);
-                            }
-                        }
-                    });
-                }
+                loop: 1,
+                easing: 'spring'
             }
         });
 

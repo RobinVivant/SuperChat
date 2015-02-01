@@ -1,9 +1,8 @@
 
 var cacaTimeout;
-var loadingChatHistory = false;
-var firstElem;
+var loadingChatHistory = true;
+var scrolling = false;
 var allMessagesLoaded = false;
-var MINIMUM_CHAT_MESSAGE_HEIGHT = 72;
 var CLIENT_ID = '396727141908-tvbl6mq0vdu9opfibl3n18ocokqfn3l9.apps.googleusercontent.com';
 var SCOPES = 'https://www.googleapis.com/auth/drive';
 
@@ -114,6 +113,10 @@ function toLocalTime (date) {
     return local.getHours()+':'+local.getMinutes();
 }
 
+function loadMoreMessages(){
+    Session.set('chatCursorPosition', Session.get('chatCursorPosition')+1 );
+}
+
 Template.chat.helpers({
     messages: function(){
         return Messages.find({},{
@@ -135,26 +138,58 @@ Template.chat.helpers({
         return this.user == Session.get('userId');
     },
     scrollDown: function(){
+
+        /*
+
+         //Meteor.defer(function(){
+         if(loadingChatHistory) {
+         $('.message-list').scrollTop($('.message-list').children().first().height() + 8);
+         }else{
+         // $('.message-list').prop('scrollHeight') - $('.message-list').height() != $('.message-list').prop('scrollTop')
+         //$('.message-list').prop('scrollHeight') - $('.message-list').height() == $('.message-list').prop('scrollTop')
+         loadingChatHistory = false;
+         }
+         //});
+
+         */
         clearTimeout(cacaTimeout);
         cacaTimeout = setTimeout(function(){
-            if(loadingChatHistory){
-                loadingChatHistory = false;
-                if( firstElem ){
-                    $('.message-list').scrollTop(firstElem.position().top + MINIMUM_CHAT_MESSAGE_HEIGHT);
-                    firstElem = null;
+
+            $('.message-list').children().velocity({
+                properties:{
+                    opacity:1
+                }, options:{
+                    duration: 200,
+                    complete: function(){
+                        if($('.message-list').scrollTop() == 0){
+                            loadMoreMessages();
+                        }else{
+                            cacaTimeout = null;
+                            loadingChatHistory = false;
+                            scrolling = false;
+                        }
+                    }
                 }
-            }else{
-                $('.message-list').scrollTop($('.message-list').prop("scrollHeight"));
-            }
+            });
+
             $('.message-list').velocity('stop').velocity({
                 properties:{
-                    opacity:[1, 0]
+                    opacity:1
                 }, options:{
                     duration: 200
                 }
             });
+        }, 300);
 
-        }, 200);
+        Meteor.defer(function(){
+            if( loadingChatHistory ){
+                $('.message-list').scrollTop($('.message-list').prop('scrollHeight'));
+            }else if( scrolling || $('.message-list').scrollTop() == 0 ) {
+                $('.message-list').scrollTop($('.message-list').children().first().height() + 8);
+            }else  {
+                $('.message-list').scrollTop( $('.message-list').scrollTop()-$('.message-list').children().first().height() - 8);
+            }
+        });
     },
     formatDate: function(timestamp){
         return toLocalTime(new Date(timestamp));
@@ -190,17 +225,9 @@ Template.chat.events({
         }
     },
     'scroll .message-list': function(e, tmpl){
-        if($(e.currentTarget).scrollTop() < 10 && !firstElem && !allMessagesLoaded){
-            loadingChatHistory = true;
-            $('.message-list').velocity('stop').velocity({
-                properties: {
-                    opacity: [0, 1]
-                }, options:{
-                    duration: 200
-                }
-            });
-            firstElem = $(e.currentTarget).children().first();
-            Session.set('chatCursorPosition', Session.get('chatCursorPosition')+10 );
+        if(!cacaTimeout && $(e.currentTarget).scrollTop() == 0 && !allMessagesLoaded){
+            scrolling = true;
+            loadMoreMessages();
         }
     },
     'click .fileUploadButton': function(e, tmpl){
@@ -222,6 +249,7 @@ Template.chat.created = function(){
     Tracker.autorun(function() {
         Session.get('roomId');
         allMessagesLoaded = false;
+        loadingChatHistory = true;
         $('.message-list').velocity('stop').velocity({
             properties: {
                 opacity: [0, 1]
@@ -230,7 +258,7 @@ Template.chat.created = function(){
             }
         });
         $('.message-list').scrollTop($('.message-list').prop("scrollHeight"));
-        Session.set('chatCursorPosition', Math.round($(window).height() / MINIMUM_CHAT_MESSAGE_HEIGHT));
+        Session.set('chatCursorPosition', 1);
     });
 
     Tracker.autorun(function() {
