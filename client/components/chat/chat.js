@@ -2,7 +2,6 @@
 var cacaTimeout;
 var loadingChatHistory = true;
 var scrolling = false;
-var allMessagesLoaded = false;
 var CLIENT_ID = '396727141908-tvbl6mq0vdu9opfibl3n18ocokqfn3l9.apps.googleusercontent.com';
 var SCOPES = 'https://www.googleapis.com/auth/drive';
 
@@ -184,7 +183,7 @@ Template.chat.helpers({
         Meteor.defer(function(){
             if( loadingChatHistory ){
                 $('.message-list').scrollTop($('.message-list').prop('scrollHeight'));
-            }else if( scrolling || $('.message-list').scrollTop() == 0 ) {
+            }else if( $('.message-list').scrollTop() == 0 ) {
                 $('.message-list').scrollTop($('.message-list').children().first().height() + 8);
             }else  {
                 $('.message-list').scrollTop( $('.message-list').scrollTop()-$('.message-list').children().first().height() - 8);
@@ -219,13 +218,13 @@ Template.chat.events({
             }, function(error, id){
                 if( error )
                     return;
-
             });
             e.currentTarget.value = '';
         }
     },
     'scroll .message-list': function(e, tmpl){
-        if(!cacaTimeout && $(e.currentTarget).scrollTop() == 0 && !allMessagesLoaded){
+
+        if(!scrolling && $(e.currentTarget).scrollTop() == 0){
             scrolling = true;
             loadMoreMessages();
         }
@@ -248,7 +247,6 @@ Template.chat.created = function(){
 
     Tracker.autorun(function() {
         Session.get('roomId');
-        allMessagesLoaded = false;
         loadingChatHistory = true;
         $('.message-list').velocity('stop').velocity({
             properties: {
@@ -266,9 +264,6 @@ Template.chat.created = function(){
         if( room) {
             Meteor.subscribe('messages', Session.get('roomId'), Math.round(Math.max(0, room.msgCount-Session.get('chatCursorPosition'))), Session.get('chatCursorPosition'), {
                 onReady: function () {
-                    if( room.msgCount <= Session.get('chatCursorPosition') ){
-                        allMessagesLoaded = true;
-                    }
                     Session.set('subsReadyCount', Session.get('subsReadyCount') + 1);
                 }
             });
