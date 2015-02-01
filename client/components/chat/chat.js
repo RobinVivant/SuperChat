@@ -176,7 +176,7 @@ Template.chat.helpers({
 Template.chat.events({
     'keyup .user-message': function(e, tmpl){
         if(e.keyCode === 13){
-            Messages.insert({
+            Meteor.call('sendMessage', {
                 room : Session.get('roomId'),
                 user : Session.get('userId'),
                 token : Session.get('userToken'),
@@ -184,6 +184,7 @@ Template.chat.events({
             }, function(error, id){
                 if( error )
                     return;
+
             });
             e.currentTarget.value = '';
         }

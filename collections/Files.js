@@ -4,8 +4,12 @@ Files = new Meteor.Collection('files');
 
 Files.allow({
     insert: function (userId, doc) {
-        if( !doc.room || !doc.name || !doc.url)
+        if( !doc.room || !doc.name || doc.name.trim().length == 0 || !doc.url)
             return false;
+
+        if( !Rooms.findOne({_id:doc.room}) )
+            return false;
+
         doc.createdAt = new Date().valueOf();
         return true;
     },

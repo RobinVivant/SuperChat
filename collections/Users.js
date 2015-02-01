@@ -4,24 +4,25 @@ Users = new Meteor.Collection('room_users');
 
 Users.allow({
     insert: function (userId, doc) {
+        if( !doc.room || doc.room.trim().length == 0 )
+            return false;
         if( Users.findOne({name: doc.name && doc.name.trim(), room: doc.room}) )
-            return;
+            return false;
         if( doc.name.trim().length == 0 )
             doc.name = 'User_'+Random.hexString(6);
         return true;
     },
     update: function (userId, doc, fields, modifier) {
-        return true;
+        return false;
     },
     remove: function (userId, doc) {
-        Messages.remove({user: doc._id});
-        return true;
+        return false;
     }
 });
 
 if (Meteor.isServer) {
 
-    Users._ensureIndex({room: 1, name: 1});
+    Users._ensureIndex({room: 1, token: 1, name: 1});
 
     Meteor.publish('room-users', function(room) {
         return Users.find({room: room}, {

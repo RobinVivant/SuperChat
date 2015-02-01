@@ -4,18 +4,7 @@ Messages = new Meteor.Collection('messages');
 
 Messages.allow({
     insert: function (userId, doc) {
-
-        if( doc.type!='link' && doc.type != 'snapshot' && (!doc.room || !doc.content || doc.content.trim().length == 0))
-            return false;
-        var user = Users.findOne({token: doc.token, room: doc.room});
-        if( !user || doc.token !== user.token )
-            return false;
-
-        Rooms.update({_id:doc.room},{
-            $inc : { msgCount : 1}
-        });
-        doc.createdAt = new Date().valueOf();
-        return true;
+        return false;
     },
     update: function (userId, doc, fields, modifier) {
         return true;

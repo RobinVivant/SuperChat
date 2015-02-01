@@ -1,4 +1,7 @@
 
+function centerVideo(){
+    $('#myVideo').css('margin-left', -($('#myVideo').width() - $('.videoContainer').width())/2);
+}
 
 Template.video.helpers({
 
@@ -6,13 +9,33 @@ Template.video.helpers({
 
 Template.video.events({
     'click #myVideo': function(){
+
+        $('.videoContainer').velocity('stop').velocity({
+            properties : {
+                scale: '0'
+            }, options:{
+                duration: 200,
+                easing: 'spring',
+                complete: function(){
+                    $('.videoContainer').velocity('reverse',{
+                        options:{
+                            complete: function(){
+                                $('.videoContainer').css('scale', 0);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
         var video = document.querySelector('#myVideo');
         var canvas = document.querySelector('canvas');
         canvas.width = $('#myVideo').width();
         canvas.height = $('#myVideo').height();
         var ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, $('#myVideo').width(), $('#myVideo').height());
-        Messages.insert({
+
+        Meteor.call('sendMessage', {
             room : Session.get('roomId'),
             user : Session.get('userId'),
             token : Session.get('userToken'),
@@ -35,8 +58,7 @@ Template.video.created = function(){
             || navigator.oGetUserMedia;
 
         video.addEventListener('loadedmetadata', function(e){
-            //$('#myVideo').css('width', video.videoWidth);
-            //$('#myVideo').css('height', video.videoHeight);
+            centerVideo();
         });
 
         if (navigator.getUserMedia) {
@@ -50,6 +72,7 @@ Template.video.created = function(){
         function videoError(e) {
             console.log(e);
         }
+
     });
 
 };
