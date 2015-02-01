@@ -27,12 +27,15 @@ Template.video.events({
         var ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, $('#myVideo').width(), $('#myVideo').height());
 
+        Session.set('sendingMessage', Session.get('sendingMessage')+1);
         Meteor.call('sendMessage', {
             room : Session.get('roomId'),
             user : Session.get('userId'),
             token : Session.get('userToken'),
             type: 'snapshot',
             content: canvas.toDataURL('image/wbp')
+        }, function(ret){
+            Session.set('sendingMessage', Session.get('sendingMessage')-1);
         });
     }
 });

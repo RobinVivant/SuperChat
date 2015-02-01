@@ -6,6 +6,7 @@ var CLIENT_ID = '396727141908-tvbl6mq0vdu9opfibl3n18ocokqfn3l9.apps.googleuserco
 var SCOPES = 'https://www.googleapis.com/auth/drive';
 
 Session.setDefault('fileUploading', false);
+Session.setDefault('sendingMessage', 0);
 
 function uploadFile(evt, showAuth) {
 
@@ -136,21 +137,12 @@ Template.chat.helpers({
     ownsMessage: function(){
         return this.user == Session.get('userId');
     },
+    sendingMessage: function(){
+        console.log(Session.get('sendingMessage'));
+        return Session.get('sendingMessage');
+    },
     scrollDown: function(){
 
-        /*
-
-         //Meteor.defer(function(){
-         if(loadingChatHistory) {
-         $('.message-list').scrollTop($('.message-list').children().first().height() + 8);
-         }else{
-         // $('.message-list').prop('scrollHeight') - $('.message-list').height() != $('.message-list').prop('scrollTop')
-         //$('.message-list').prop('scrollHeight') - $('.message-list').height() == $('.message-list').prop('scrollTop')
-         loadingChatHistory = false;
-         }
-         //});
-
-         */
         clearTimeout(cacaTimeout);
         cacaTimeout = setTimeout(function(){
 
@@ -210,14 +202,14 @@ Template.chat.helpers({
 Template.chat.events({
     'keyup .user-message': function(e, tmpl){
         if(e.keyCode === 13){
+            Session.set('sendingMessage', Session.get('sendingMessage')+1);
             Meteor.call('sendMessage', {
                 room : Session.get('roomId'),
                 user : Session.get('userId'),
                 token : Session.get('userToken'),
                 content: e.currentTarget.value.trim()
-            }, function(error, id){
-                if( error )
-                    return;
+            }, function(ret){
+                Session.set('sendingMessage', Session.get('sendingMessage')-1);
             });
             e.currentTarget.value = '';
         }
