@@ -4,7 +4,7 @@ WebRTCPeersChannel = new Meteor.Stream('peers');
 if(Meteor.isServer){
 
     WebRTCPeersChannel.permissions.write(function(eventName, message) {
-        return Users.findOne({token: message.userToken});
+        return Users.findOne({token: message.userToken, room: message.roomId});
     }, false);
 
     WebRTCPeersChannel.permissions.read(function(eventName) {

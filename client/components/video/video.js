@@ -14,6 +14,9 @@ function makeRTCConnection(peerId) {
     });
     pc.onaddstream = function (e) {
         peerConnections[peerId].stream = e.stream;
+        e.stream.onremovetrack = function(e){
+            console.log(e);
+        }
         var video = document.createElement('video');
         video.id = peerId;
         $('.roomVideos').append(video);
