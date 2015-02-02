@@ -62,6 +62,42 @@ function makeRTCConnection(peerId) {
     return pc;
 }
 
+function sendVideo(elem){
+    elem.parent().velocity('stop').velocity({
+        properties : {
+            scale: 0.5
+        }, options:{
+            duration: 200,
+            loop: 1,
+            easing: 'spring'
+        }
+    });
+
+    var video = elem[0];
+    var canvas = document.querySelector('canvas');
+    var dim = [elem.width(), elem.height()];
+
+    if( elem.prop('id') != 'myVideo' ){
+        console.log(peerConnections[''+elem.prop('id')].stream);
+    }
+
+    canvas.width = dim[0];
+    canvas.height = dim[1];
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    Session.set('sendingMessage', Session.get('sendingMessage')+1);
+    Meteor.call('sendMessage', {
+        room : Session.get('roomId'),
+        user : Session.get('userId'),
+        token : Session.get('userToken'),
+        type: 'snapshot',
+        content: canvas.toDataURL('image/jpg')
+    }, function(ret){
+        Session.set('sendingMessage', Session.get('sendingMessage')-1);
+    });
+}
+
 Template.video.helpers({
     peerVideos: function(){
         return PeerVideos.find();
@@ -69,43 +105,11 @@ Template.video.helpers({
 });
 
 Template.video.events({
+    'click .peerVideo' : function(e, tmpl){
+        sendVideo($(e.currentTarget).find('video'));
+    },
     'click video': function(e, tmpl){
-
-        var elem = $(e.currentTarget);
-
-        elem.parent().velocity('stop').velocity({
-            properties : {
-                scale: 0.5
-            }, options:{
-                duration: 200,
-                loop: 1,
-                easing: 'spring'
-            }
-        });
-
-        var video = elem[0];
-        var canvas = document.querySelector('canvas');
-        var dim = [elem.width(), elem.height()];
-
-        if( elem.prop('id') != 'myVideo' ){
-            console.log(peerConnections[''+elem.prop('id')].stream);
-        }
-
-        canvas.width = dim[0];
-        canvas.height = dim[1];
-        var ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        Session.set('sendingMessage', Session.get('sendingMessage')+1);
-        Meteor.call('sendMessage', {
-            room : Session.get('roomId'),
-            user : Session.get('userId'),
-            token : Session.get('userToken'),
-            type: 'snapshot',
-            content: canvas.toDataURL('image/jpg')
-        }, function(ret){
-            Session.set('sendingMessage', Session.get('sendingMessage')-1);
-        });
+        sendVideo($(e.currentTarget));
     }
 });
 
