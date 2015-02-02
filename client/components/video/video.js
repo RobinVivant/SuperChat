@@ -57,7 +57,10 @@ Template.video.created = function(){
         });
 
         if (navigator.getUserMedia) {
-            navigator.getUserMedia({video: true}, handleVideo, videoError);
+            navigator.getUserMedia({
+                video: true,
+                audio: false
+            }, handleVideo, videoError);
         }
 
         function handleVideo(stream) {
