@@ -1,8 +1,8 @@
 #chat{
   width: 100%;
   height: 100%;
-  overflow-y:scroll;
   margin-bottom: 10em;
+  margin-left: -1px;
 
   .message-list{
     opacity: 0;
@@ -36,7 +36,6 @@
     flex-basis: 3em;
     max-height:3em;
     background-color: #6e6e6e;
-    border-radius:1em 0 0 0;
   }
 
   #filePicker{
@@ -60,26 +59,31 @@
 
     &>div{
       padding:0.6em 0.6em 0.6em;
-      background-color: #6e6e6e;
+      background-color: #b7b7b7;
       color: white;
       float:left;
       word-wrap: break-word;
       max-width:80%;
-      border-radius:0 0.6em 0.6em 0.6em;
+      border-radius:0 0.7em 0.7em 0.7em;
     }
   }
 
   .myMsg > div{
     float:right !important;
     background-color: #59DE11 !important;
-    border-radius:0.6em 0 0.6em 0.6em !important;
+    border-radius:0.7em 0 0.7em 0.7em !important;
   }
 
   .myMsg > p{
     text-align: right;
   }
+  .myMsg .message-content > img {
+    transform: scaleX(-1);
+  }
 
-
+  .message-content > img {
+    border-radius: 0 0.2em 0.2em 0.2em;
+  }
 
   .message-user{
     text-align:left;
