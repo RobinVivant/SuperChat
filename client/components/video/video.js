@@ -3,6 +3,21 @@ var localStream;
 var peerConnections = {};
 var lastRoomId = null;
 
+PeerVideos = new Meteor.Collection(null);
+
+PeerVideos.allow({
+    insert: function (userId, doc) {
+        return true;
+    },
+    update: function (userId, doc, fields, modifier) {
+        return true;
+    },
+    remove: function (userId, doc) {
+        return true;
+    }
+});
+
+
 function centerVideo(){
     $('#myVideo').css('margin-left', -($('#myVideo').width() - $('.videoContainer').width())/2);
 }
@@ -14,13 +29,11 @@ function makeRTCConnection(peerId) {
     });
     pc.onaddstream = function (e) {
         peerConnections[peerId].stream = e.stream;
-        var video = document.createElement('video');
-        video.id = peerId;
-        $('#'+peerId).remove();
-        $('.roomVideos').append(video);
-        video.autoplay = true;
-        video.src = URL.createObjectURL(e.stream);
 
+        PeerVideos.insert({
+            id: peerId,
+            src: URL.createObjectURL(e.stream)
+        });
     };
     pc.onicecandidate = function (e) {
         pc.onicecandidate = null;
@@ -39,14 +52,16 @@ setInterval(function(){
     for( var i in peerConnections ){
         if( peerConnections[i].connection.iceConnectionState === 'disconnected' ){
             peerConnections[i].connection.close();
-            $('#'+i).remove();
+            PeerVideos.remove({id: i});
             delete peerConnections[i];
         }
     }
 }, 500);
 
 Template.video.helpers({
-
+    peerVideos: function(){
+        return PeerVideos.find();
+    }
 });
 
 Template.video.events({
@@ -107,7 +122,7 @@ Template.video.created = function(){
         if (navigator.getUserMedia) {
             navigator.getUserMedia({
                 video: true,
-                audio: false
+                audio: true
             }, handleVideo, videoError);
         }
 
@@ -128,7 +143,7 @@ Template.video.created = function(){
                         peerConnections[i].connection.close();
                         delete peerConnections[i];
                     }
-                    $('.roomVideos').empty();
+                    PeerVideos.remove({});
                 }
 
                 lastRoomId = Session.get('roomId');
@@ -199,10 +214,7 @@ Template.video.created = function(){
         if( !isDestinated(message) )
             return;
 
-
-        peerConnections[message.userId].connection.setRemoteDescription(new RTCSessionDescription(message.sessionDescription), function () {
-            console.info('Received correct answer from ' + message.userId + '.');
-        });
+        peerConnections[message.userId].connection.setRemoteDescription(new RTCSessionDescription(message.sessionDescription));
 
     });
 
@@ -223,7 +235,7 @@ Template.video.created = function(){
 
         if( peerConnections[message.userId] ){
             peerConnections[message.userId].connection.close();
-            $('#'+message.userId).remove();
+            PeerVideos.remove({id: message.userId });
             delete peerConnections[message.userId];
         }
 

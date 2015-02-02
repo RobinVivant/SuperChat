@@ -2,6 +2,7 @@
 var cacaTimeout;
 var loadingChatHistory = true;
 var scrolling = false;
+var scrollToBottom = false;
 var CLIENT_ID = '396727141908-tvbl6mq0vdu9opfibl3n18ocokqfn3l9.apps.googleusercontent.com';
 var SCOPES = 'https://www.googleapis.com/auth/drive';
 
@@ -153,6 +154,7 @@ Template.chat.helpers({
                             cacaTimeout = null;
                             loadingChatHistory = false;
                             scrolling = false;
+                            scrollToBottom = false;
                         }
                     }
                 }
@@ -168,11 +170,12 @@ Template.chat.helpers({
         }, 300);
 
         Meteor.defer(function(){
-            if( loadingChatHistory ){
-                $('.message-list').scrollTop($('.message-list').prop('scrollHeight'));
-            }else if( $('.message-list').scrollTop() == 0 ) {
+            if( $('.message-list').scrollTop() == 0 && !loadingChatHistory) {
                 $('.message-list').scrollTop($('.message-list').children().first().height() + 8);
-            }else  {
+            }else if( scrollToBottom || Math.abs($('.message-list').scrollTop() - $('.message-list').prop('scrollHeight') + $('.message-list').height()) < 2 || loadingChatHistory)  {
+                scrollToBottom = true;
+                $('.message-list').scrollTop($('.message-list').prop('scrollHeight'));
+            }else{
                 $('.message-list').scrollTop( $('.message-list').scrollTop()-$('.message-list').children().first().height() - 8);
             }
         });
