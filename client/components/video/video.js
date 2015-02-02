@@ -22,6 +22,20 @@ function centerVideo(){
     $('#myVideo').css('margin-left', -($('#myVideo').width() - $('.videoContainer').width())/2);
 }
 
+setInterval(function(){
+    for( var i in peerConnections ){
+        if( peerConnections[i].connection.iceConnectionState === 'disconnected' ){
+            PeerVideos.remove({id: i});
+        }else{
+            if( PeerVideos.find({id: i}).count() == 0 ){
+                PeerVideos.insert({
+                    id: i,
+                    src: URL.createObjectURL(peerConnections[i].stream)
+                });
+            }
+        }
+    }
+}, 500);
 
 function makeRTCConnection(peerId) {
     var pc = new RTCPeerConnection({
@@ -47,16 +61,6 @@ function makeRTCConnection(peerId) {
     };
     return pc;
 }
-
-setInterval(function(){
-    for( var i in peerConnections ){
-        if( peerConnections[i].connection.iceConnectionState === 'disconnected' ){
-            peerConnections[i].connection.close();
-            PeerVideos.remove({id: i});
-            delete peerConnections[i];
-        }
-    }
-}, 500);
 
 Template.video.helpers({
     peerVideos: function(){
