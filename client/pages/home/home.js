@@ -89,42 +89,49 @@ Template.home.created = function(){
         var previousName = $('.user-name').val();
 
         function createUser(){
-            navigator.geolocation.getCurrentPosition(function(pos){
-                Users.insert({
-                    room: Session.get('roomId'),
-                    token: localStorage.token,
-                    name: previousName,
-                    geoPos: {
-                        latitude: pos.coords.latitude,
-                        longitude: pos.coords.longitude
-                    }
-                }, function(error, id) {
-                    Session.set('userId', id);
-                });
+            Users.insert({
+                room: Session.get('roomId'),
+                token: localStorage.token,
+                name: previousName,
+                geoPos: {
+                    latitude: 0,
+                    longitude: 0
+                }
+            }, function(error, id) {
+                Session.set('userId', id);
             });
-        };
-
-        if( !localStorage.token){
-            localStorage.token = Random.hexString(12);
-            createUser();
-        }else{
             navigator.geolocation.getCurrentPosition(function(pos){
-                Users.update({_id: Session.get('userId')}, {
+                Users.update({_id: Session.get('userId')},{
                     $set:{
                         geoPos: {
                             latitude: pos.coords.latitude,
                             longitude: pos.coords.longitude
                         }
                     }
-                },function(){
-                    Meteor.call('getUser',  Session.get('roomId'), localStorage.token, function (error, result) {
-                        if (error || !result) {
-                            createUser();
-                        } else {
-                            Session.set('userId', result._id);
-                        }
-                    });
                 });
+            });
+        }
+
+        if( !localStorage.token){
+            localStorage.token = Random.hexString(12);
+            createUser();
+        }else{
+            Meteor.call('getUser',  Session.get('roomId'), localStorage.token, function (error, result) {
+                if (error || !result) {
+                    createUser();
+                } else {
+                    Session.set('userId', result._id);
+                    navigator.geolocation.getCurrentPosition(function(pos){
+                        Users.update({_id: result._id}, {
+                            $set:{
+                                geoPos: {
+                                    latitude: pos.coords.latitude,
+                                    longitude: pos.coords.longitude
+                                }
+                            }
+                        });
+                    });
+                }
             });
         }
 

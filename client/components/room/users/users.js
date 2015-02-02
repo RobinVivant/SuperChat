@@ -38,22 +38,6 @@ Template.users.created = function(){
 
     Session.set('selectedUser', Session.get("userId"));
 
-    Tracker.autorun(function() {
-        var user = Users.findOne({_id: Session.get('selectedUser')});
-        if( !user || !Session.get('maps-api-loaded') )
-            return;
-
-        if( Session.get('maps-api-loaded') ) {
-            var userPos = new google.maps.LatLng(user.geoPos.latitude, user.geoPos.longitude);
-            var marker = new google.maps.Marker({
-                position: userPos ,
-                map: userMap,
-                title: user.name
-            });
-            userMap.setCenter(userPos);
-        }
-    });
-
     Tracker.autorun(function(){
         if( Session.get('maps-script-loaded') ) {
             Meteor.defer(function(){
@@ -64,6 +48,20 @@ Template.users.created = function(){
                 Session.set('maps-api-loaded', true);
             });
         }
+    });
+
+    Tracker.autorun(function() {
+        var user = Users.findOne({_id: Session.get('selectedUser')});
+        if( !user || !Session.get('maps-api-loaded') )
+            return;
+
+        var userPos = new google.maps.LatLng(user.geoPos.latitude, user.geoPos.longitude);
+        var marker = new google.maps.Marker({
+            position: userPos ,
+            map: userMap,
+            title: user.name
+        });
+        userMap.setCenter(userPos);
     });
 };
 
