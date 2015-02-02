@@ -8,7 +8,7 @@ var SCOPES = 'https://www.googleapis.com/auth/drive';
 Session.setDefault('fileUploading', false);
 Session.setDefault('sendingMessage', 0);
 
-function uploadFile(evt, showAuth) {
+function uploadFile(file, showAuth) {
 
     gapi.auth.authorize({
         'client_id': CLIENT_ID,
@@ -18,7 +18,6 @@ function uploadFile(evt, showAuth) {
         if(authResult && !authResult.error){
             Session.set('fileUploading', true);
             gapi.client.load('drive', 'v2', function() {
-                var file = evt.target.files[0];
                 insertFile(file, function(name, url){
                     if(arguments.length ==0){
                         console.log("error uploading file");
@@ -29,23 +28,20 @@ function uploadFile(evt, showAuth) {
                             url: url,
                             user: Session.get('userId')
                         });
-                        Messages.insert({
+                        Meteor.call('sendMessage',{
                             room : Session.get('roomId'),
                             user : Session.get('userId'),
                             token : Session.get('userToken'),
                             type: 'link',
                             linkName: name,
                             linkUrl: url
-                        }, function(error, id){
-                            if( error )
-                                return;
                         });
                     }
                     Session.set('fileUploading', false);
                 });
             });
         }else{
-            uploadFile(evt, true);
+            uploadFile(file, true);
         }
     });
 }
@@ -228,10 +224,20 @@ Template.chat.events({
 
 Template.chat.created = function(){
 
+    Meteor.defer(function(){
+        $('.console').on('drop', function(e){
+            //stop the browser from opening the file
+            e.preventDefault();
+            uploadFile(e.originalEvent.dataTransfer.files[0]);
+        });
+    });
+
     Tracker.autorun(function(){
         if( Session.get('drive-script-loaded') ) {
             Meteor.defer(function() {
-                document.getElementById('filePicker').onchange = uploadFile;
+                document.getElementById('filePicker').onchange = function(e){
+                    uploadFile(e.target.files[0]);
+                };
             });
         }
     });
