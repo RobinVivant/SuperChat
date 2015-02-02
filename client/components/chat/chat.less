@@ -80,12 +80,15 @@
   .myMsg > p{
     text-align: right;
   }
-  .myMsg .message-content > img {
-    transform: scaleX(-1);
-  }
 
   .message-content > img {
+      transform: scaleX(-1);
     border-radius: 0 0.2em 0.2em 0.2em;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,0.4);
+  }
+
+  .message-content {
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.08);
   }
 
   .message-user{
