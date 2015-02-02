@@ -7,12 +7,15 @@
         <div class="user-list">
             {{#each users}}
                 {{#if showUser}}
-                    <div class="name {{#if isSelectedUser}}current-user{{/if}}">
-                        {{#if isCurrentUser}}
-                            <i class="fa fa-user"></i>{{name}}
-                        {{else}}
-                            {{name}}<i class="fa fa-share"></i>
-                        {{/if}}
+                    <div class="name flex-row ">
+                        <div class="pseudo {{#if isSelectedUser}}current-user{{/if}}">
+                            {{#if isCurrentUser}}<i class="fa fa-user"></i>{{/if}}{{name}}
+                        </div>
+                    {{#if isCurrentUser}}{{else}}
+                        <div class="send">
+                            <i class="fa fa-upload"></i>
+                        </div>
+                    {{/if}}
                     </div>
                 {{/if}}
             {{/each}}

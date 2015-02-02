@@ -18,7 +18,7 @@
     -webkit-flex-grow: 1;
     overflow:auto;
 
-    div{
+    &>div{
       cursor: pointer;
       word-wrap: break-word;
       text-overflow: ellipsis;
@@ -27,8 +27,6 @@
       line-height: 3em;
       height: 3em;
       text-align: center;
-      padding-left:0.5em;
-      padding-right:0.5em;
       background-color: #dc6300;
       color: white;
       &:nth-child(odd){
@@ -40,17 +38,28 @@
       }
 
       .fa-share{
-        position: absolute;
-        z-index:2;
-        right:0;
+
       }
+      .pseudo{
+        flex-grow: 1;
+        -webkit-flex-grow: 1;
+        overflow:hidden;
+        padding-left:0.5em;
+        padding-right:0.5em;
+      }
+      .send{
+        overflow:hidden;
+        padding-left:0.5em;
+        padding-right:0.5em;
+        background-color: #59DE11;
+      }
+
     }
 
   }
 
   .current-user{
     font-weight:bold;
-    background-color:black;
     color:white;
     box-shadow: 0 0 0.7em 0.1em black inset;
   }

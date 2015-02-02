@@ -21,13 +21,15 @@ Template.users.helpers({
 });
 
 Template.users.events({
-    'click .user-list > div': function(e, tmpl){
+    'click .user-list .pseudo': function(e, tmpl){
         Session.set('selectedUser', this._id);
+    },
+    'click .user-list .send': function(e, tmpl){
+        Session.set('sendFileP2PTo', this._id);
     },
     'keyup .find-user > input': function(e, tmpl){
         Session.set('userFilter', e.currentTarget.value.trim());
     }
-
 });
 
 
