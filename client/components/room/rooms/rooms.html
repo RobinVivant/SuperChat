@@ -6,7 +6,9 @@
         </div>
         <div class="room-list">
             {{#each rooms}}
-                <div class="{{ifIsCurrentRoom}}">({{msgCount}}) {{name}}</div>
+            <div class="{{ifIsCurrentRoom}}">
+                <p>{{name}}</p><p class="nMsg">{{msgCount}} messages</p>
+            </div>
             {{/each}}
         </div>
     </div>

@@ -10,13 +10,11 @@
                 {{#if showUser}}
                     <div class="name flex-row ">
                         <div class="pseudo {{#if isSelectedUser}}current-user{{/if}}">
-                            {{#if isCurrentUser}}<i class="fa fa-user"></i>{{/if}}{{name}}
+                            <p>{{#if isCurrentUser}}<i class="fa fa-user"></i>{{/if}}{{name}}</p>
                         </div>
-                    {{#if isCurrentUser}}{{else}}
-                        <div class="send">
-                            <i class="fa fa-upload"></i>
+                        <div class="send {{#if isCurrentUser}}disabled{{/if}}">
+                            <i class="fa fa-upload "></i>
                         </div>
-                    {{/if}}
                     </div>
                 {{/if}}
             {{/each}}
