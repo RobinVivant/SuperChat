@@ -3,9 +3,9 @@
     <div id="chat"  class="flex-col">
         <div class="message-list">
             {{#each messages}}
-                <div class="msg">
-                    <div class="{{#if ownsMessage}}myMsg {{/if}}">
-                        <div class="message-user">{{userNameFromId user}}</div>
+                <div class="msg {{#if ownsMessage}}myMsg {{/if}}">
+                    <p class="message-user">{{userNameFromId user}}</p>
+                    <div>
                         <div class="message-content">{{getContent}}</div>
                         <div class="message-date">{{formatDate createdAt}}</div>
                     </div>

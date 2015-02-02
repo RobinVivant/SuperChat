@@ -6,6 +6,10 @@
   .main-container{
     flex-grow:1;
     -webkit-flex-grow: 1;
+
+    &>div{
+      height: 100%;
+    }
   }
 
   .header{
@@ -32,6 +36,7 @@
   .chat-panel{
     flex-grow:2 !important;
     -webkit-flex-grow: 2 !important;
+    width: 50% !important;
 
   }
 
@@ -40,6 +45,7 @@
     -webkit-flex-grow: 1;
     float:left;
     min-width:10em;
+    width:25%;
 
     & > *{
       flex-grow: 1;

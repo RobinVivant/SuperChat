@@ -1,11 +1,11 @@
 #chat{
   width: 100%;
   height: 100%;
-  overflow:auto;
+  overflow-y:scroll;
+  margin-bottom: 10em;
 
   .message-list{
     opacity: 0;
-    overflow:auto;
     flex-grow: 1;
     -webkit-flex-grow: 1;
     min-height: 5em;
@@ -15,6 +15,9 @@
     flex-basis: 10em;
     -webkit-flex-basis: 10em;
     min-height: 10em;
+    width: 50%;
+    position: fixed;
+    bottom: 0;
   }
 
   .user-message{
@@ -55,27 +58,36 @@
     overflow:hidden;
 
     &>div{
-      padding:0.6em;
+      padding:0.6em 0.6em 0.6em;
       background-color: #6e6e6e;
       color: white;
       float:left;
       word-wrap: break-word;
-      max-width:50%;
-      border-radius:0.3em;
+      max-width:80%;
+      border-radius:0 0.6em 0.6em 0.6em;
     }
   }
 
-  .myMsg{
+  .myMsg > div{
     float:right !important;
     background-color: #59DE11 !important;
+    border-radius:0.6em 0 0.6em 0.6em !important;
   }
+
+  .myMsg > p{
+    text-align: right;
+  }
+
+
 
   .message-user{
     text-align:left;
     width:100%;
     font-weight:bold;
     font-size:0.8em;
-    margin-bottom: 0.5em;
+    margin-bottom: 0.3em;
+    color: #888;
+    font-size: 0.75em;
   }
 
   .message-date{
@@ -83,6 +95,7 @@
     width:100%;
     font-size:0.7em;
     margin-top: 0.6em;
+    opacity: 0.85;
   }
 
   .disabled{

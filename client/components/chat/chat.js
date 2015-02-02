@@ -145,7 +145,7 @@ Template.chat.helpers({
                 properties:{
                     opacity:1
                 }, options:{
-                    duration: 200,
+                    duration: 100,
                     complete: function(){
                         if($('.message-list').scrollTop() == 0){
                             loadMoreMessages();
@@ -162,7 +162,7 @@ Template.chat.helpers({
                 properties:{
                     opacity:1
                 }, options:{
-                    duration: 200
+                    duration: 100
                 }
             });
         }, 300);
@@ -249,7 +249,7 @@ Template.chat.created = function(){
             properties: {
                 opacity: [0, 1]
             }, options:{
-                duration: 200
+                duration: 100
             }
         });
         $('.message-list').scrollTop($('.message-list').prop("scrollHeight"));
