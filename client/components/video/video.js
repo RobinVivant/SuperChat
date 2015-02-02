@@ -69,9 +69,11 @@ Template.video.helpers({
 });
 
 Template.video.events({
-    'click #myVideo': function(){
+    'click video': function(e, tmpl){
 
-        $('.videoContainer').velocity('stop').velocity({
+        var elem = $(e.currentTarget);
+
+        elem.parent().velocity('stop').velocity({
             properties : {
                 scale: 0.5
             }, options:{
@@ -81,12 +83,18 @@ Template.video.events({
             }
         });
 
-        var video = document.querySelector('#myVideo');
+        var video = elem[0];
         var canvas = document.querySelector('canvas');
-        canvas.width = $('#myVideo').width();
-        canvas.height = $('#myVideo').height();
+        var dim = [elem.width(), elem.height()];
+
+        if( elem.prop('id') != 'myVideo' ){
+            console.log(peerConnections[''+elem.prop('id')].stream);
+        }
+
+        canvas.width = dim[0];
+        canvas.height = dim[1];
         var ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, $('#myVideo').width(), $('#myVideo').height());
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
         Session.set('sendingMessage', Session.get('sendingMessage')+1);
         Meteor.call('sendMessage', {
