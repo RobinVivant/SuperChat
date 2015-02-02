@@ -77,10 +77,6 @@ function sendVideo(elem){
     var canvas = document.querySelector('canvas');
     var dim = [elem.width(), elem.height()];
 
-    if( elem.prop('id') != 'myVideo' ){
-        console.log(peerConnections[''+elem.prop('id')].stream);
-    }
-
     canvas.width = dim[0];
     canvas.height = dim[1];
     var ctx = canvas.getContext('2d');
@@ -133,6 +129,18 @@ Template.video.created = function(){
 
         video.addEventListener('loadedmetadata', function(e){
             centerVideo();
+        });
+
+        video.addEventListener('playing', function(e){
+            $('.videoContainer').velocity('stop').velocity({
+                properties : {
+                    scale: 0.5
+                }, options:{
+                    duration: 200,
+                    loop: 1,
+                    easing: 'spring'
+                }
+            });
         });
 
         if (navigator.getUserMedia) {
