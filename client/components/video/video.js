@@ -14,11 +14,9 @@ function makeRTCConnection(peerId) {
     });
     pc.onaddstream = function (e) {
         peerConnections[peerId].stream = e.stream;
-        e.stream.onremovetrack = function(e){
-            console.log(e);
-        }
         var video = document.createElement('video');
         video.id = peerId;
+        $('#'+peerId).remove();
         $('.roomVideos').append(video);
         video.autoplay = true;
         video.src = URL.createObjectURL(e.stream);
@@ -36,6 +34,16 @@ function makeRTCConnection(peerId) {
     };
     return pc;
 }
+
+setInterval(function(){
+    for( var i in peerConnections ){
+        if( peerConnections[i].connection.iceConnectionState === 'disconnected' ){
+            peerConnections[i].connection.close();
+            $('#'+i).remove();
+            delete peerConnections[i];
+        }
+    }
+}, 500);
 
 Template.video.helpers({
 
