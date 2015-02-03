@@ -104,8 +104,8 @@ Template.video.events({
     'click .peerVideo' : function(e, tmpl){
         sendVideo($(e.currentTarget).find('video'));
     },
-    'click video': function(e, tmpl){
-        sendVideo($(e.currentTarget));
+    'click .videoContainer': function(e, tmpl){
+        sendVideo($(e.currentTarget).find('video'));
     }
 });
 

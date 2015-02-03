@@ -8,8 +8,8 @@
         <div class="user-list">
             {{#each users}}
                 {{#if showUser}}
-                    <div class="name flex-row ">
-                        <div class="pseudo {{#if isSelectedUser}}current-user{{/if}}">
+                    <div class="name flex-row {{#if isSelectedUser}}current-user{{/if}}">
+                        <div class="pseudo">
                             <p>{{#if isCurrentUser}}<i class="fa fa-user"></i>{{/if}}{{name}}</p>
                         </div>
                         <div class="send {{#if isCurrentUser}}disabled{{/if}}">
