@@ -17,6 +17,7 @@ function uploadFile(file, showAuth) {
         'immediate': !showAuth
     },function(authResult){
         if(authResult && !authResult.error){
+            Session.set('sendingMessage', Session.get('sendingMessage')+1);
             Session.set('fileUploading', true);
             gapi.client.load('drive', 'v2', function() {
                 insertFile(file, function(name, url){
@@ -36,6 +37,8 @@ function uploadFile(file, showAuth) {
                             type: 'link',
                             linkName: name,
                             linkUrl: url
+                        }, function(ret){
+                            Session.set('sendingMessage', Session.get('sendingMessage')-1);
                         });
                     }
                     Session.set('fileUploading', false);

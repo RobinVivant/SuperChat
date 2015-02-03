@@ -26,6 +26,7 @@ Template.users.events({
     },
     'click .user-list .send': function(e, tmpl){
         Session.set('sendFileP2PTo', this._id);
+        $('#p2pFilePicker').trigger('click');
     },
     'keyup .find-user > input': function(e, tmpl){
         Session.set('userFilter', e.currentTarget.value.trim());
@@ -44,37 +45,46 @@ Template.users.created = function(){
     Meteor.defer(function() {
         document.getElementById('p2pFilePicker').onchange = function(e){
             var reader = new FileReader();
-            reader.readAsDataURL(e.target.files[0]);
 
             var chunkLength = 1000;
 
-            reader.onload = function (event, text) {
-                var data = {}; // data object to transmit over data channel
+            var pc = peerConnections[Session.get('sendFileP2PTo')];
 
-                if (event) text = event.target.result; // on first invocation
+            if( !pc || !pc.channel )
+                return;
+
+            var dataChannel = pc.channel;
+
+            function onReadAsDataURL(event, text) {
+                var data = {};
+
+                data.filename = e.target.files[0].name;
+
+                if (event)
+                    text = event.target.result; // on first invocation
 
                 if (text.length > chunkLength) {
-                    data.message = text.slice(0, chunkLength); // getting chunk using predefined chunk length
+                    data.message = text.slice(0, chunkLength);
                 } else {
                     data.message = text;
                     data.last = true;
+                    Session.set('sendFileP2PTo', null);
                 }
 
-                dataChannel.send(data); // use JSON.stringify for chrome!
+                dataChannel.send(JSON.stringify(data)); // use JSON.stringify for chrome!
+
+                console.log('sent chunk');
 
                 var remainingDataURL = text.slice(data.message.length);
-                if (remainingDataURL.length) setTimeout(function () {
-                    onReadAsDataURL(null, remainingDataURL); // continue transmitting
-                }, 500)
-            };
-        };
-    });
+                if (remainingDataURL.length)
+                    //setTimeout(function () {
+                        onReadAsDataURL(null, remainingDataURL); // continue transmitting
+                   // }, 50);
+            }
 
-    Tracker.autorun(function(){
-        if( Session.get('sendFileP2PTo') ) {
-            $('#p2pFilePicker').trigger('click');
-            Session.set('sendFileP2PTo', null);
-        }
+            reader.onload = onReadAsDataURL;
+            reader.readAsDataURL(e.target.files[0]);
+        };
     });
 
     Tracker.autorun(function(){
