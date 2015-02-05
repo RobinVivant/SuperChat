@@ -1,5 +1,5 @@
 
-Session.setDefault('room-view', 'rooms');
+Session.setDefault('room-view', 'users');
 
 Template.room.helpers({
     selectedView: function(){

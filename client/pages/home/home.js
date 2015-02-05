@@ -6,18 +6,13 @@ Template.home.helpers({
             return user.name;
         }
     },
+    rooms: function(){
+        return Rooms.find({}, {
+            sort: {name: 1}
+        }).fetch();
+    },
     roomName: function(){
         return Session.get('roomName');
-    },
-    activeIfIsRoomOwner: function(){
-        if( !Session.get('isRoomOwner') ){
-            return 'disabled';
-        }
-    },
-    visibleIfIsRoomOwner: function(){
-        if( !Session.get('isRoomOwner') ){
-            return 'display:none;';
-        }
     }
 });
 
@@ -45,6 +40,21 @@ Template.home.events({
         Meteor.call('removeRoom', Session.get('roomId'), localStorage.token, function(error, result){
 
         });
+    },
+    'focus #roomSetting>input': function (e, tmpl) {
+        console.log(e);
+        $('#roomSetting').addClass('active');
+    },
+    'click #roomSetting>*': function (e, tmpl) {
+        e.stopImmediatePropagation();
+    },
+    'click #roomList > li': function(e, tmpl) {
+        Session.set('roomId', this._id);
+    },
+    'click': function (e, tmpl) {
+        if (e.currentTarget != document.getElementById('roomSetting')) {
+            $('#roomSetting').removeClass('active');
+        }
     }
 });
 

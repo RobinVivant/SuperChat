@@ -1,10 +1,19 @@
 
 <template name="home">
     <div id="home" class="flex-col">
-        <div class="header flex-row">
-            <input type="text" class="user-name" value="{{userName}}"/>
-            <input type="text" class="room-name" value="{{roomName}}" {{activeIfIsRoomOwner}}/>
-            <input type="button" class="room-destroy" value="Delete this room" style="{{visibleIfIsRoomOwner}}"/>
+        <div class="header">
+            <div id="username"><input type="text" class="user-name" value="{{userName}}"/></div>
+            <h1>Super Chat</h1>
+            <div id="roomSetting">
+                <input type="text" class="room-name" value="{{roomName}}"/>
+                <ul id="roomList">
+                    {{#each rooms}}
+                    <li id="{{_id}}">
+                        <span>{{name}}</span><span class="nMsg">{{msgCount}} messages</span>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
         </div>
         <div class="main-container">
             <div class="panel flex-col">
