@@ -21,19 +21,6 @@ Meteor.methods({
         });
         return true;
     },
-    'updateUserStatus': function(room, token, label, video){
-        if( !name || name.trim().length == 0 || Users.findOne({name: name, room: room}))
-            return false;
-        Users.update({token: token, room: room}, {
-            $set:{
-                status: {
-                    label : label,
-                    video: video
-                }
-            }
-        });
-        return true;
-    },
     'removeRoom': function(room, token){
         Rooms.remove({owner: token, _id: room}, function(error){
             if( !error ){

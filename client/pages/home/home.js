@@ -1,7 +1,7 @@
 
 Template.home.helpers({
     userName: function(){
-        var user = Users.findOne({_id:Session.get('userId')});
+        var user = Users.findOne({_id:Session.get('userId')},{reactive: false});
         if( user ){
             return user.name;
         }
@@ -83,9 +83,7 @@ Template.home.created = function(){
 
     Tracker.autorun(function(){
 
-        if( Session.get('subsReadyCount') >= 2 ){
-            Session.set('subsReadyCount', 0);
-        }else{
+        if( Session.get('subsReadyCount') < 2 ){
             return;
         }
 
@@ -148,7 +146,6 @@ Template.home.created = function(){
     });
 
     Session.set('userToken', localStorage.token);
-
 
     Tracker.autorun(function(){
         var room = Rooms.findOne({_id: Session.get('roomId')});

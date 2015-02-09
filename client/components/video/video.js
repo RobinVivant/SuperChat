@@ -19,22 +19,7 @@ PeerVideos.allow({
 
 
 function saveToDisk(fileUrl, fileName) {
-
     window.open(fileUrl, 'blank');
-    /*
-
-     var a = document.createElement("a");
-     a.innerHTML = "Download " + fileName;
-     // safari doesn't support this yet
-     if (typeof a.download === 'undefined') {
-     window.location = fileUrl;
-     } else {
-     a.href = fileUrl;
-     a.download = fileName;
-     document.body.appendChild(a);
-     }
-     return;
-     */
 }
 
 
@@ -42,37 +27,59 @@ function centerVideo(){
     $('#myVideo').css('margin-left', -($('#myVideo').width() - $('.videoContainer').width())/2);
 }
 
-setInterval(function(){
-    for( var i in peerConnections ){
-        if( peerConnections[i].connection.iceConnectionState === 'disconnected' ){
-            PeerVideos.remove({id: i});
-        }else{
-            if( PeerVideos.find({id: i}).count() == 0 && peerConnections[i].stream ){
-                PeerVideos.insert({
-                    id: i,
-                    src: URL.createObjectURL(peerConnections[i].stream)
-                });
-            }
-        }
-    }
-}, 500);
 
-function makeRTCConnection(peerId, initiator) {
+function makeRTCConnection(peerId) {
     var pc = new RTCPeerConnection({
         iceServers: [{ url: 'stun:stun.l.google.com:19302' }]
     });
-    pc.onaddstream = function (e) {
-        peerConnections[peerId].stream = e.stream;
 
-        PeerVideos.remove({id: peerId});
-        PeerVideos.insert({
+    pc.oniceconnectionstatechange = function(e){
+        var state = e.currentTarget.iceConnectionState;
+        var user = Users.findOne({_id:peerId});
+
+        if(!user)
+            return;
+
+        console.log('Peer '+user.name+' : '+state);
+
+        if( state === 'closed' &&
+            (
+                !peerConnections[peerId] ||
+                (
+                    peerConnections[peerId] &&
+                    peerConnections[peerId].connection.localDescription &&
+                    peerConnections[peerId].connection.localDescription.sdp == pc.localDescription.sdp
+                )
+            )
+        ){
+            PeerVideos.remove({id: peerId });
+        }else if( state === 'disconnected' && pc.iceConnectionState != 'closed' ){
+            pc.close();
+        }else if ( state === 'connected' || state === 'completed' ){
+            PeerVideos.upsert({
+                id: peerId
+            },{
+                id: peerId,
+                src: URL.createObjectURL(peerConnections[peerId].stream)
+            });
+
+        }
+    };
+    pc.onaddstream = function (e) {
+        console.log('Received stream from ' + Users.findOne({_id:peerId}).name);
+        peerConnections[peerId].stream = e.stream;
+        PeerVideos.upsert({
+            id: peerId
+        },{
             id: peerId,
             src: URL.createObjectURL(e.stream)
         });
+
     };
     pc.onicecandidate = function (e) {
         pc.onicecandidate = null;
         if (!e || !e.candidate) return;
+        console.log('Sending icecandidate to ' + Users.findOne({_id:peerId}).name);
         WebRTCPeersChannel.emit('icecandidate', {
             userToken: localStorage.token,
             roomId: Session.get('roomId'),
@@ -83,15 +90,13 @@ function makeRTCConnection(peerId, initiator) {
     pc.ondatachannel = function (e) {
         if( !peerConnections[peerId].channel )
             peerConnections[peerId].channel = e.channel;
-        console.log('poupou');
+
         var arrayToStoreChunks = [];
 
         e.channel.onmessage = function (event) {
             var data = JSON.parse(event.data);
             arrayToStoreChunks.push(data.message);
-            console.log('received chunk!');
             if (data.last) {
-                console.log('saving');
                 saveToDisk(arrayToStoreChunks.join(''), data.filename);
                 arrayToStoreChunks = [];
             }
@@ -101,13 +106,18 @@ function makeRTCConnection(peerId, initiator) {
 }
 
 function sendVideo(elem){
+
     elem.parent().velocity('stop').velocity({
         properties : {
             scale: 0.5
         }, options:{
             duration: 200,
-            loop: 1,
-            easing: 'spring'
+            complete: function(){
+                elem.parent().velocity('reverse',{
+                    duration: 200,
+                    easing: 'spring'
+                });
+            }
         }
     });
 
@@ -152,198 +162,200 @@ Template.video.created = function(){
     $.cachedScript( "//cdn.temasys.com.sg/adapterjs/latest/adapter.min.js")
         .fail(function( jqxhr, settings, exception ) {
             console('error initializing js adapter', exception);
-        }
-    );
-    Meteor.defer(function(){
-        var video = document.querySelector("#myVideo");
-
-        navigator.getUserMedia =
-            navigator.getUserMedia
-            || navigator.webkitGetUserMedia
-            || navigator.mozGetUserMedia
-            || navigator.msGetUserMedia
-            || navigator.oGetUserMedia;
-
-        video.addEventListener('loadedmetadata', function(e){
-            centerVideo();
+        }).done(function(){
+            onAdapterLoaded();
         });
 
-        video.addEventListener('playing', function(e){
-            $('.videoContainer').velocity('stop').velocity({
-                properties : {
-                    scale: 0.5
-                }, options:{
-                    duration: 200,
-                    loop: 1,
-                    easing: 'spring'
-                }
+    function onAdapterLoaded(){
+
+        Meteor.defer(function(){
+            var video = document.querySelector("#myVideo");
+
+            navigator.getUserMedia =
+                navigator.getUserMedia
+                || navigator.webkitGetUserMedia
+                || navigator.mozGetUserMedia
+                || navigator.msGetUserMedia
+                || navigator.oGetUserMedia;
+
+            video.addEventListener('loadedmetadata', function(e){
+                centerVideo();
             });
-        });
 
-        if (navigator.getUserMedia) {
-            navigator.getUserMedia({
-                video: true,
-                audio: true
-            }, handleVideo, function(e){
-                console.log(e);
-                handleVideo(null);
-            });
-        }
-
-        function handleVideo(stream) {
-            if(stream){
-                localStream = stream;
-                video.src = window.URL.createObjectURL(stream);
-            }
-
-            Tracker.autorun(function(){
-                if( !Session.get('roomId') || !Session.get('userId'))
-                    return;
-
-                if( lastRoomId ){
-                    WebRTCPeersChannel.emit('leave', {
-                        userToken: localStorage.token,
-                        roomId: lastRoomId
-                    });
-                    for( var i in peerConnections){
-                        peerConnections[i].connection.close();
-                        delete peerConnections[i];
-                    }
-                    PeerVideos.remove({});
-                }
-
-                lastRoomId = Session.get('roomId');
-
-                var peers = Users.find({_id: {$ne: Session.get('userId')}}).fetch();
-                for (var i in peers ) {
-                    if( peerConnections[peers[i]._id] )
-                        continue;
-                    var pc = makeRTCConnection(peers[i]._id, true);
-                    pc.answererName = peers[i]._id;
-                    localStream && pc.addStream(localStream);
-                    peerConnections[peers[i]._id] = {
-                        connection: pc,
-                        channel: pc.createDataChannel("files", {
-                            ordered: true,
-                            maxRetransmitTime: 3000 // in milliseconds
-                        })
-                    };
-                    (function (connection, id) {
-                        connection.createOffer(function (sessionDescription) {
-                            connection.setLocalDescription(sessionDescription, function(){
-                                WebRTCPeersChannel.emit('offer', {
-                                    userToken: localStorage.token,
-                                    roomId: Session.get('roomId'),
-                                    sessionDescription: sessionDescription,
-                                    peerId: id
-                                });
-                            }, function(){
-                                console.log(arguments);
+            video.addEventListener('playing', function(e){
+                $('.videoContainer').velocity('stop').velocity({
+                    properties : {
+                        scale: 0.5
+                    }, options:{
+                        duration: 200,
+                        complete: function(){
+                            $('.videoContainer').velocity('reverse',{
+                                duration: 200,
+                                easing: 'spring'
                             });
-
-                        }, function(error){
-                            console.log(error);
-                        }, {
-                            "offerToReceiveAudio":true,
-                            "offerToReceiveVideo":true
-                        });
-                    })(pc, peers[i]._id);
-
-                }
+                        }
+                    }
+                });
             });
 
-        }
-
-    });
-
-
-    function isDestinated(message){
-        return message.peerId == Session.get('userId') && message.roomId == Session.get('roomId') ;
-    }
-
-    WebRTCPeersChannel.on('offer', function(message){
-        if( !isDestinated(message))
-            return;
-
-        var pc = makeRTCConnection(message.userId, true);
-        pc.answererName = message.userId;
-        localStream && pc.addStream(localStream);
-
-        peerConnections[message.userId] = {
-            connection: pc
-        };
-
-        pc.setRemoteDescription(new RTCSessionDescription(message.sessionDescription), function () {
-            pc.createAnswer(function (sessionDescription) {
-                pc.setLocalDescription(sessionDescription, function(){
-
-                }, function(){
-                    console.log(arguments);
+            if (navigator.getUserMedia) {
+                navigator.getUserMedia({
+                    video: true,
+                    audio: true
+                }, function (stream) {
+                    if(stream){
+                        localStream = stream;
+                        video.src = window.URL.createObjectURL(stream);
+                        Session.set('resetPeerConnections', true);
+                    }
+                }, function(e){
+                    console.log(e);
                 });
-                WebRTCPeersChannel.emit('answer', {
-                    userToken: localStorage.token,
-                    roomId: Session.get('roomId'),
-                    sessionDescription: sessionDescription,
-                    peerId: message.userId
-                });
-            }, function(error){
-                console.log(error);
-            });
+            }
+
         });
 
-    }, function(){
+        Tracker.autorun(function(){
+            if( Session.get('subsReadyCount') < 2 || !Session.get('roomId') || !Session.get('userId')
+                || (!Session.get('resetPeerConnections') && lastRoomId == Session.get('roomId')))
+                return;
 
-    }, function(){
-        console.log(arguments);
-    });
+            console.log('Reseting peers...');
 
-    WebRTCPeersChannel.on('answer', function(message){
-        if( !isDestinated(message) )
-            return;
-
-        peerConnections[message.userId].connection.setRemoteDescription(
-            new RTCSessionDescription(message.sessionDescription),
-            function(){
-
-            }, function(){
-                console.log(arguments);
+            if( lastRoomId ){
+                PeerVideos.remove({});
+                for( var i in peerConnections){
+                    peerConnections[i].connection.iceConnectionState != 'closed' && peerConnections[i].connection.close();
+                    delete peerConnections[i];
+                }
             }
-        );
-    });
 
-    WebRTCPeersChannel.on('icecandidate', function(message){
-        if( !isDestinated(message)  || !peerConnections[message.userId] )
-            return;
+            lastRoomId = Session.get('roomId');
 
-        if( !peerConnections[message.userId].channel ) {
-            peerConnections[message.userId].channel = peerConnections[message.userId].connection.createDataChannel("files", {
-                ordered: true,
-                maxRetransmitTime: 3000 // in milliseconds
-            });
+            var peers = Users.find({_id: {$ne: Session.get('userId')}}).fetch();
+            for (var i in peers ) {
+                var pc = makeRTCConnection(peers[i]._id, true);
+                pc.answererName = peers[i]._id;
+                localStream && pc.addStream(localStream);
+                peerConnections[peers[i]._id] = {
+                    connection: pc,
+                    channel: pc.createDataChannel("files", {
+                        ordered: true,
+                        maxRetransmitTime: 3000 // in milliseconds
+                    })
+                };
+                (function (connection, id) {
+                    connection.createOffer(function (sessionDescription) {
+                        connection.setLocalDescription(sessionDescription, function(){
+                            console.log('Sending offer to ' + Users.findOne({_id:id}).name);
+                            WebRTCPeersChannel.emit('offer', {
+                                userToken: localStorage.token,
+                                roomId: Session.get('roomId'),
+                                sessionDescription: sessionDescription,
+                                peerId: id
+                            });
+                        }, function(){
+                            console.log(arguments);
+                        });
+
+                    }, function(error){
+                        console.log(error);
+                    }, {
+                        "offerToReceiveAudio":true,
+                        "offerToReceiveVideo":true
+                    });
+                })(pc, peers[i]._id);
+
+            }
+
+            Session.set('resetPeerConnections', false);
+        });
+
+
+        function isDestinated(message){
+            return message.peerId == Session.get('userId') && message.roomId == Session.get('roomId') ;
         }
 
-        peerConnections[message.userId].connection.addIceCandidate(new RTCIceCandidate({
-            sdpMLineIndex: message.candidate.sdpMLineIndex,
-            candidate: message.candidate.candidate
-        }), function(){
+        WebRTCPeersChannel.on('offer', function(message){
+            if( !isDestinated(message))
+                return;
+
+            console.log('Received offer from ' + Users.findOne({_id:message.userId}).name);
+
+            var pc = makeRTCConnection(message.userId, true);
+            pc.answererName = message.userId;
+            localStream && pc.addStream(localStream);
+
+
+            peerConnections[message.userId] = {
+                connection: pc
+            };
+
+            pc.setRemoteDescription(new RTCSessionDescription(message.sessionDescription), function () {
+                pc.createAnswer(function (sessionDescription) {
+                    pc.setLocalDescription(sessionDescription, function(){
+                        console.log('Sending answer to ' + Users.findOne({_id:message.userId}).name);
+                        WebRTCPeersChannel.emit('answer', {
+                            userToken: localStorage.token,
+                            roomId: Session.get('roomId'),
+                            sessionDescription: sessionDescription,
+                            peerId: message.userId
+                        });
+                    }, function(){
+                        console.log(arguments);
+                    });
+                }, function(error){
+                    console.log(error);
+                });
+            });
+
+        }, function(){
+
         }, function(){
             console.log(arguments);
         });
 
-    });
+        WebRTCPeersChannel.on('answer', function(message){
+            if( !isDestinated(message) )
+                return;
 
-    WebRTCPeersChannel.on('leave', function(message){
-        if(  message.roomId != Session.get('roomId') && message.peerId != Session.get('userId') )
-            return;
+            console.log('Received answer from ' + Users.findOne({_id:message.userId}).name);
 
-        if( peerConnections[message.userId] ){
-            peerConnections[message.userId].connection.close();
-            PeerVideos.remove({id: message.userId });
-            delete peerConnections[message.userId];
-        }
+            peerConnections[message.userId].connection.setRemoteDescription(
+                new RTCSessionDescription(message.sessionDescription),
+                function(){
 
-    });
+                }, function(){
+                    console.log(arguments);
+                }
+            );
+        });
 
+        WebRTCPeersChannel.on('icecandidate', function(message){
+            if( !isDestinated(message)  || !peerConnections[message.userId] )
+                return;
+
+            console.log('Received icecandidate from ' + Users.findOne({_id:message.userId}).name);
+
+
+            if( !peerConnections[message.userId].channel ) {
+                peerConnections[message.userId].channel = peerConnections[message.userId].connection.createDataChannel("files", {
+                    ordered: true,
+                    maxRetransmitTime: 1000 // in milliseconds
+                });
+            }
+
+
+            peerConnections[message.userId].connection.addIceCandidate(new RTCIceCandidate({
+                sdpMLineIndex: message.candidate.sdpMLineIndex,
+                candidate: message.candidate.candidate
+            }), function(){
+            }, function(){
+                console.log(arguments);
+            });
+
+        });
+    }
 };
 
 

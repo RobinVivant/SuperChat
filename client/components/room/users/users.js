@@ -68,18 +68,16 @@ Template.users.created = function(){
                 } else {
                     data.message = text;
                     data.last = true;
+                    console.log('sent '+data.filename);
                     Session.set('sendFileP2PTo', null);
                 }
 
                 dataChannel.send(JSON.stringify(data)); // use JSON.stringify for chrome!
 
-                console.log('sent chunk');
-
                 var remainingDataURL = text.slice(data.message.length);
                 if (remainingDataURL.length)
-                    //setTimeout(function () {
-                        onReadAsDataURL(null, remainingDataURL); // continue transmitting
-                   // }, 50);
+                    onReadAsDataURL(null, remainingDataURL); // continue transmitting
+
             }
 
             reader.onload = onReadAsDataURL;

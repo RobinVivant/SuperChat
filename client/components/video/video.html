@@ -3,15 +3,13 @@
     <div id="video" class="flex-col">
         <div class="roomVideos flex-col">
             {{#each peerVideos}}
-                {{#if src}}
-                    <div class="peerVideo">
-                        <video src="{{src}}" id="{{id}}" autoplay muted></video>
-                        <div>
-                            <span>Username</span>
-                            <a href="#"><i class="fa fa-volume-off"></i></a>
-                        </div>
+                <div class="peerVideo">
+                    <video src="{{src}}" id="{{id}}" autoplay muted></video>
+                    <div>
+                        <span>Username</span>
+                        <a href="#"><i class="fa fa-volume-off"></i></a>
                     </div>
-                {{/if}}
+                </div>
             {{/each}}
         </div>
         <div class="myVideo">

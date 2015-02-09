@@ -11,11 +11,6 @@ Users.allow({
         if( doc.name.trim().length == 0 )
             doc.name = 'User_'+Random.hexString(6);
 
-        doc.status = {
-            label : 'online',
-            video: false
-        };
-
         return true;
     },
     update: function (userId, doc, fields, modifier) {
