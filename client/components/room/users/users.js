@@ -50,8 +50,10 @@ Template.users.created = function(){
 
             var pc = peerConnections[Session.get('sendFileP2PTo')];
 
-            if( !pc || !pc.channel )
+            if( !pc || !pc.channel ) {
+                console.log("empty channel!");
                 return;
+            }
 
             var dataChannel = pc.channel;
 

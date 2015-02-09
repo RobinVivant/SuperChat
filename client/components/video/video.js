@@ -28,6 +28,19 @@ function centerVideo(){
 }
 
 
+function onChannelMessage(channel){
+    var arrayToStoreChunks = [];
+
+    channel.onmessage = function (event) {
+        var data = JSON.parse(event.data);
+        arrayToStoreChunks.push(data.message);
+        if (data.last) {
+            saveToDisk(arrayToStoreChunks.join(''), data.filename);
+            arrayToStoreChunks = [];
+        }
+    };
+}
+
 function makeRTCConnection(peerId) {
     var pc = new RTCPeerConnection({
         iceServers: [{ url: 'stun:stun.l.google.com:19302' }]
@@ -88,19 +101,12 @@ function makeRTCConnection(peerId) {
         });
     };
     pc.ondatachannel = function (e) {
-        if( !peerConnections[peerId].channel )
+        console.log('Received channel from ' + Users.findOne({_id:peerId}).name);
+
+        //if( !peerConnections[peerId].channel ) {
             peerConnections[peerId].channel = e.channel;
-
-        var arrayToStoreChunks = [];
-
-        e.channel.onmessage = function (event) {
-            var data = JSON.parse(event.data);
-            arrayToStoreChunks.push(data.message);
-            if (data.last) {
-                saveToDisk(arrayToStoreChunks.join(''), data.filename);
-                arrayToStoreChunks = [];
-            }
-        };
+            onChannelMessage(e.channel);
+        //}
     };
     return pc;
 }
@@ -236,7 +242,8 @@ Template.video.created = function(){
             for (var i in peers ) {
                 var pc = makeRTCConnection(peers[i]._id, true);
                 pc.answererName = peers[i]._id;
-                localStream && pc.addStream(localStream);
+                if(localStream)
+                    pc.addStream(localStream);
                 peerConnections[peers[i]._id] = {
                     connection: pc,
                     channel: pc.createDataChannel("files", {
@@ -244,6 +251,7 @@ Template.video.created = function(){
                         maxRetransmitTime: 3000 // in milliseconds
                     })
                 };
+                onChannelMessage(peerConnections[peers[i]._id].channel);
                 (function (connection, id) {
                     connection.createOffer(function (sessionDescription) {
                         connection.setLocalDescription(sessionDescription, function(){
@@ -284,8 +292,8 @@ Template.video.created = function(){
 
             var pc = makeRTCConnection(message.userId, true);
             pc.answererName = message.userId;
-            localStream && pc.addStream(localStream);
-
+            if(localStream)
+                pc.addStream(localStream);
 
             peerConnections[message.userId] = {
                 connection: pc
@@ -337,14 +345,14 @@ Template.video.created = function(){
 
             console.log('Received icecandidate from ' + Users.findOne({_id:message.userId}).name);
 
-
+/*
             if( !peerConnections[message.userId].channel ) {
                 peerConnections[message.userId].channel = peerConnections[message.userId].connection.createDataChannel("files", {
                     ordered: true,
-                    maxRetransmitTime: 1000 // in milliseconds
+                    maxRetransmitTime: 3000 // in milliseconds
                 });
             }
-
+*/
 
             peerConnections[message.userId].connection.addIceCandidate(new RTCIceCandidate({
                 sdpMLineIndex: message.candidate.sdpMLineIndex,
