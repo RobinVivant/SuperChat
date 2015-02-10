@@ -17,7 +17,7 @@ Template.files.helpers({
 
 Template.files.events({
 
-    'keyup .search-file > input': function(e, tmpl){
+    'input .search-file > input': function(e, tmpl){
         Session.set('fileFilter', e.currentTarget.value.trim());
     }
 });

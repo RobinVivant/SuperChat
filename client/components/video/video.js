@@ -40,8 +40,16 @@ function onChannelMessage(channel){
 }
 
 function makeRTCConnection(peerId) {
+
+
+    // DTLS/SRTP is preferred on chrome
+    // to interop with Firefox
+    // which supports them by default
+
     var pc = new RTCPeerConnection({
         iceServers: [{ url: 'stun:stun.l.google.com:19302' }]
+    },{
+        optional: [{ DtlsSrtpKeyAgreement: true }]
     });
 
     pc.oniceconnectionstatechange = function(e){
@@ -161,7 +169,7 @@ Template.video.events({
 
 Template.video.created = function(){
 
-    $.cachedScript( "//cdn.temasys.com.sg/adapterjs/latest/adapter.min.js")
+    $.cachedScript( "//cdn.temasys.com.sg/adapterjs/0.10.x/adapter.debug.js")
         .fail(function( jqxhr, settings, exception ) {
             console('error initializing js adapter', exception);
         }).done(function(){

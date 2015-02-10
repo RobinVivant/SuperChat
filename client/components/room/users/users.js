@@ -28,7 +28,7 @@ Template.users.events({
         Session.set('sendFileP2PTo', this._id);
         $('#p2pFilePicker').trigger('click');
     },
-    'keyup .find-user > input': function(e, tmpl){
+    'input .find-user > input': function(e, tmpl){
         Session.set('userFilter', e.currentTarget.value.trim());
     }
 });

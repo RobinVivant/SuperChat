@@ -19,7 +19,7 @@ Template.home.helpers({
 var usernameTimeout, roomTimeout;
 
 Template.home.events({
-    'keyup .user-name': function(e, tmpl){
+    'input .user-name': function(e, tmpl){
         if( e.currentTarget.value.trim().length == 0 || e.keyCode != 8 && e.keyCode != 46 && (e.keyCode < 65 || e.keyCode > 90))
             return;
 
@@ -66,6 +66,7 @@ Template.home.created = function(){
     Meteor.defer(function(){
         function doIt(){
             $('.main-container').height($(window).height()-$('.header').height());
+            $('.view').height($(window).height()-$('.header').height()-$('.tabs').height());
         }
         $(window).on('resize', doIt);
         doIt();
