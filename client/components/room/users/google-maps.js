@@ -1,5 +1,5 @@
 
-Session.setDefault('maps-script-loaded', false);
+Session.set('maps-script-loaded', false);
 
 initMapsAPI = function(){
     Meteor.defer(function(){

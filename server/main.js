@@ -21,6 +21,16 @@ Meteor.methods({
         });
         return true;
     },
+    'updateUserLoc': function(room, token, pos){
+        if( !pos || Users.findOne({token: token, room: room}))
+            return false;
+        Users.update({token: token, room: room}, {
+            $set:{
+                geoPos: pos
+            }
+        });
+        return true;
+    },
     'removeRoom': function(room, token){
         Rooms.remove({owner: token, _id: room}, function(error){
             if( !error ){

@@ -22,11 +22,9 @@ function saveToDisk(fileUrl, fileName) {
     window.open(fileUrl, 'blank');
 }
 
-
 function centerVideo(){
     $('#myVideo').css('margin-left', -($('#myVideo').width() - $('.videoContainer').width())/2);
 }
-
 
 function onChannelMessage(channel){
     var arrayToStoreChunks = [];
@@ -57,12 +55,12 @@ function makeRTCConnection(peerId) {
 
         if( state === 'closed' &&
             (
-                !peerConnections[peerId] ||
-                (
-                    peerConnections[peerId] &&
-                    peerConnections[peerId].connection.localDescription &&
-                    peerConnections[peerId].connection.localDescription.sdp == pc.localDescription.sdp
-                )
+            !peerConnections[peerId] ||
+            (
+            peerConnections[peerId] &&
+            peerConnections[peerId].connection.localDescription &&
+            peerConnections[peerId].connection.localDescription.sdp == pc.localDescription.sdp
+            )
             )
         ){
             PeerVideos.remove({id: peerId });
@@ -103,10 +101,8 @@ function makeRTCConnection(peerId) {
     pc.ondatachannel = function (e) {
         console.log('Received channel from ' + Users.findOne({_id:peerId}).name);
 
-        //if( !peerConnections[peerId].channel ) {
-            peerConnections[peerId].channel = e.channel;
-            onChannelMessage(e.channel);
-        //}
+        peerConnections[peerId].channel = e.channel;
+        onChannelMessage(e.channel);
     };
     return pc;
 }
@@ -344,15 +340,6 @@ Template.video.created = function(){
                 return;
 
             console.log('Received icecandidate from ' + Users.findOne({_id:message.userId}).name);
-
-/*
-            if( !peerConnections[message.userId].channel ) {
-                peerConnections[message.userId].channel = peerConnections[message.userId].connection.createDataChannel("files", {
-                    ordered: true,
-                    maxRetransmitTime: 3000 // in milliseconds
-                });
-            }
-*/
 
             peerConnections[message.userId].connection.addIceCandidate(new RTCIceCandidate({
                 sdpMLineIndex: message.candidate.sdpMLineIndex,

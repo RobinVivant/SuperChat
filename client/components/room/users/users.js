@@ -34,8 +34,8 @@ Template.users.events({
 });
 
 
-Session.setDefault('maps-api-loaded', false);
-Session.setDefault('sendFileP2PTo', null);
+Session.set('maps-api-loaded', false);
+Session.set('sendFileP2PTo', null);
 var userMap;
 
 Template.users.created = function(){
@@ -44,14 +44,13 @@ Template.users.created = function(){
 
     Meteor.defer(function() {
         document.getElementById('p2pFilePicker').onchange = function(e){
+
             var reader = new FileReader();
-
             var chunkLength = 1000;
-
             var pc = peerConnections[Session.get('sendFileP2PTo')];
 
             if( !pc || !pc.channel ) {
-                console.log("empty channel!");
+                console.log("Empty channel!");
                 return;
             }
 
@@ -72,6 +71,7 @@ Template.users.created = function(){
                     data.last = true;
                     console.log('sent '+data.filename);
                     Session.set('sendFileP2PTo', null);
+                    document.getElementById('p2pFilePicker').value = "";
                 }
 
                 dataChannel.send(JSON.stringify(data)); // use JSON.stringify for chrome!
@@ -88,7 +88,7 @@ Template.users.created = function(){
     });
 
     Tracker.autorun(function(){
-        if( Session.get('maps-script-loaded') ) {
+        if( Session.get('maps-script-loaded') && google && google.maps) {
             Meteor.defer(function(){
                 userMap = new google.maps.Map(document.getElementById("map-canvas"), {
                     zoom: 8,
@@ -100,8 +100,12 @@ Template.users.created = function(){
     });
 
     Tracker.autorun(function() {
+        if(!Session.get('selectedUser')){
+            Session.set('selectedUser', Session.get('userId'));
+        }
+
         var user = Users.findOne({_id: Session.get('selectedUser')});
-        if( !user || !Session.get('maps-api-loaded') )
+        if( !user || !Session.get('maps-api-loaded') || !google  )
             return;
 
         var userPos = new google.maps.LatLng(user.geoPos.latitude, user.geoPos.longitude);
@@ -110,7 +114,8 @@ Template.users.created = function(){
             map: userMap,
             title: user.name
         });
-        userMap.setCenter(userPos);
+        if( userMap )
+            userMap.setCenter(userPos);
     });
 };
 
