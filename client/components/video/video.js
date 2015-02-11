@@ -64,11 +64,11 @@ function makeRTCConnection(peerId) {
         if( state === 'closed' &&
             (
             !peerConnections[peerId] ||
-            (
-            peerConnections[peerId] &&
-            peerConnections[peerId].connection.localDescription &&
-            peerConnections[peerId].connection.localDescription.sdp == pc.localDescription.sdp
-            )
+                (
+                peerConnections[peerId] &&
+                peerConnections[peerId].connection.localDescription &&
+                peerConnections[peerId].connection.localDescription.sdp == pc.localDescription.sdp
+                )
             )
         ){
             PeerVideos.remove({id: peerId });
@@ -159,11 +159,19 @@ Template.video.helpers({
 });
 
 Template.video.events({
-    'click .peerVideo' : function(e, tmpl){
-        sendVideo($(e.currentTarget).find('video'));
+    'click .peerVideo video' : function(e, tmpl){
+        sendVideo($(e.currentTarget));
     },
     'click .videoContainer': function(e, tmpl){
         sendVideo($(e.currentTarget).find('video'));
+    },
+    'click .peerVideo a.muted-yes': function (e, tmpl) {
+        $('#' + e.currentTarget.dataset.id + '>video')[0].muted = false;
+        $('#' + e.currentTarget.dataset.id).removeClass('muted');
+    },
+    'click .peerVideo a.muted-no': function (e, tmpl) {
+        $('#' + e.currentTarget.dataset.id + '>video')[0].muted = true;
+        $('#' + e.currentTarget.dataset.id).addClass('muted');
     }
 });
 

@@ -37,7 +37,7 @@ Template.home.helpers({
 });
 
 Template.registerHelper('roomHiddenOrNot', function (name) {
-    if (roomFieldValue.get().length > 0 && name.indexOf(roomFieldValue.get()) == -1)
+    if (roomFieldValue.get().length > 0 && name.toLowerCase().indexOf(roomFieldValue.get().toLowerCase()) == -1)
         return 'hidden';
 });
 
@@ -72,6 +72,7 @@ Template.home.events({
     },
     'focus #roomSetting>input': function (e, tmpl) {
         $('#roomSetting').addClass('active');
+        roomFieldValue.set('');
     },
     'click #roomSetting>*': function (e, tmpl) {
         e.stopImmediatePropagation();

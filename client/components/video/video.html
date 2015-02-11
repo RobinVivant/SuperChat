@@ -3,12 +3,11 @@
     <div id="video" class="flex-col">
         <div class="roomVideos flex-col">
             {{#each peerVideos}}
-                <div class="peerVideo">
-                    <video src="{{src}}" id="{{id}}" autoplay muted></video>
-                    <div>
-                        <span>Username</span>
-                        <a href="#"><i class="fa fa-volume-off"></i></a>
-                    </div>
+                <div class="peerVideo muted" id="{{id}}">
+                    <video src="{{src}}" autoplay muted></video>
+                    <a href="#" class="muted-yes" data-id="{{id}}"><i class="fa fa-volume-off"></i></a>
+                    <a href="#" class="muted-no" data-id="{{id}}"><i class="fa fa-volume-up"></i></a>
+
                 </div>
             {{/each}}
         </div>
