@@ -25,8 +25,18 @@
 		text-align: right;
 		>* {
 			float: left;
+			border-left: 1px solid #444;
+			border-right: 1px solid #111;
+			box-sizing: border-box;
 		}
-	
+
+		&:first-child {
+			border-left: none;
+		}
+		&:last-child {
+			border-right: none;
+		}
+
 		&>h1 {
 			height: 100%;
 			padding: 0.2em 0;
@@ -38,13 +48,15 @@
 			text-shadow: 0 0 5px #ff7800;
 		}
 
+		&>div#username input {
+			text-align: right;
+		}
 		&>div {
 			height: 100%;
 			width: 25%;
 			position: relative;
 			padding: 0;
 			input {
-				text-align: center;
 				color: inherit;
 				position: absolute;
 				left:0;
@@ -52,19 +64,32 @@
 				width: 100%;
 				margin:0;
 				box-sizing: border-box;
-				border-bottom:1px solid #ff7800;
 				border-top: 1px solid transparent;
 				z-index: 20;
 				background: none;
+				cursor: pointer;
 				&:focus {
 					text-align: left;
+					cursor: text;
 				}
 			}
 			&.active ul {
 				visibility: visible;
 			}
+
+
+			a#destroyRoom {
+				position: absolute;
+				top:0;
+				right: 0;
+				padding: .4em; 
+				color: white;
+				z-index: 25;
+			}
+
 			ul {
 				visibility: hidden;
+				background: #E65D19;
 
 				width: 100%;
 				position: absolute;
@@ -86,13 +111,17 @@
 					white-space: nowrap;
 					overflow:hidden;
 					line-height: 1em;
-					padding: 0.4em 0.9em 0.5em;
+					height: 1em;
+					padding: 0.4em .9em 0.5em;
 					background-color: #FF7800;
 					color: white;
-					box-sizing: border-box;
+					position: relative;
+					margin: 0;
 
 					border-top: 1px solid #FC8630;
 					border-bottom: 1px solid #E65D19;
+					
+					transition: height .2s, padding .2s, margin-bottom 0s;
 
 					&:last-child {
 						border-bottom-width: 2px;
@@ -103,17 +132,53 @@
 						background-color: #FC6B10;
 					}
 
+					&:active {
+						border-color: #E65D19;
+						background-color: #E65D19
+					}
+					
+					i {
+						width: auto!important;
+						font-size: 0.8em;
+						margin-right: .2em;
+						margin-top: -.1em;
+					}
+
 					span {
 						float: left;
 						padding: 0;
 						margin: 0;
 						text-shadow: 0 -1px 1px #E65D19;
+						transition: opacity .3s;
+					}
+
+
+					&.hidden {
+						height: 0;
+						padding-top: 0;
+						padding-bottom: 0;
+						margin-top: -2px;
+						span {
+							opacity: 0;
+						}
+					}
+
+					&.room-action {
+						text-overflow: ellipsis;
 					}
 
 					span.nMsg {
 						float:right;
 						font-size: 0.75em;
 						opacity: 0.7;
+					}
+
+					&.disabled, &.disabled>span>i.fa{
+						color: rgba(255, 255, 255, 0.5)!important;
+						cursor: not-allowed;
+						&:active, &:hover {
+							background-color: #FF7800;
+						}
 					}
 				}
 				.current-room {

@@ -5,14 +5,24 @@
             <div id="username"><input type="text" class="user-name" value="{{userName}}"/></div>
             <h1>Super Chat</h1>
             <div id="roomSetting">
-                <input type="text" class="room-name" value="{{roomName}}"/>
+                <input type="text" value="{{roomName}}" id="roomName" placeholder="Select a room ▾"/>
                 <ul id="roomList">
                     {{#each rooms}}
-                    <li id="{{_id}}">
-                        <span>{{name}}</span><span class="nMsg">{{msgCount}} messages</span>
+                    <li class="room {{roomHiddenOrNot name}}" id="{{_id}}">
+                        <span class="room-name">{{name}}</span>
+                        <span class="nMsg">{{msgCount}} messages</span>
                     </li>
                     {{/each}}
+                    <li id="createRoom" class="room-action {{createDisabledOrNot}}">
+                        <span><i class="fa fa-plus-circle"></i> Create "{{ getRoomFieldValue }}"</span>
+                    </li>
+                    <li id="renameRoom" class="room-action {{renameDisabledOrNot}}">
+                        <span><i class="fa fa-pencil"></i> Rename to "{{ getRoomFieldValue }}"</span>
+                    </li>
                 </ul>
+                {{#if getIsRoomOwner}}
+                    <a id="destroyRoom"><i class="fa fa-trash-o"></i></a>
+                {{/if}}
             </div>
         </div>
         <div class="main-container">
