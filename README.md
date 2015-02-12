@@ -1,7 +1,7 @@
 Super Chat!
 =
 
-This is a **chat webapp**, also allowing to start multiple **video conversations** and **share files** using Google Drive or direct **p2p file transfert** (private, secure and faster). Chats are divided by **rooms** and **no authentification** is required, a unique private id is simply generated and stored into the Local Storage. A **special feature** let you **take snapshots** of you or you friends (suprise mofucker) and instantly send it as a message into the chat.
+This is a **chat webapp**, also allowing to start multiple **video conversations** and **share files** using Google Drive or direct **p2p file transfer** (private, secure and faster). Chats are divided by **rooms** and **no authentication** is required, a unique private id is simply generated and stored into the Local Storage. A **special feature** let you **take snapshots** of you or you friends (suprise mofucker) and instantly send it as a message into the chat.
 
 ###Getting started
 
@@ -17,13 +17,13 @@ This is a **chat webapp**, also allowing to start multiple **video conversations
 - Access  this url from a browser
 <kbd>http://localhost:3000</kbd>
 
-> Chrome 39 is currently recommended as it has the best support for Web RTC
-> Firefox and Chrome Ice Candidates are not compatible, thus you can't share videos nor files betweens those browsers
+> Latest Chrome version is currently recommended as it has the best support for Web RTC
+> Firefox and Chrome Ice Candidates are not compatible, thus you can't share videos or files between those browsers
 
 ###Technologies
 
 - **Meteor** : https://www.meteor.com/
-Client-side and server-side realtime reactive framework, with embeded MongoDB
+Client-side and server-side realtime reactive framework, with embedded MongoDB
 Packages used :
 	- iron:router
 	- less
