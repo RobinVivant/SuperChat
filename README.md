@@ -3,8 +3,6 @@ Super Chat!
 
 This is a **chat webapp**, also allowing to start multiple **video conversations** and **share files** using Google Drive or direct **p2p file transfert** (private, secure and faster). Chats are divided by **rooms** and **no authentification** is required, a unique private id is simply generated and stored into the Local Storage. A **special feature** let you **take snapshots** of you or you friends (suprise mofucker) and instantly send it as a message into the chat.
 
-----------
-
 ###Getting started
 
 > Windows is not supported.
@@ -21,8 +19,6 @@ This is a **chat webapp**, also allowing to start multiple **video conversations
 
 > Chrome 39 is currently recommended as it has the best support for Web RTC
 > Firefox and Chrome Ice Candidates are not compatible, thus you can't share videos nor files betweens those browsers
-
-----------
 
 ###Technologies
 
@@ -41,8 +37,6 @@ File sharing into the chat. Each user upload files into his drive and register a
 - **Google Maps API** : https://developers.google.com/maps/web/
 Display of chat members location on a dynamic map
 
-----------
-
 ###Code overview
 
 If you want to contribute to the project you are very welcomed, just submit a pull requests!
@@ -56,10 +50,8 @@ If you want to contribute to the project you are very welcomed, just submit a pu
 - /**server**/ : only executed on the server. Contains all the rpc endpoints
 - /**collections**/ : mongoDB collection definitions, rules and publishes
 
-----------
-
 ###Authors
-Initiated as a school project at Polytech' Nice-Sophia Antipolis, France.
+Initiated for a school project at Polytech' Nice-Sophia Antipolis, France.
 
 *Nancy Fong*,
 *Swan Jumelle*,
