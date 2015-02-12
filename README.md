@@ -17,7 +17,7 @@ This is a **chat webapp**, also allowing to start multiple **video conversations
 - Access  this url from a browser
 <kbd>http://localhost:3000</kbd>
 
-> Latest Chrome version is currently recommended as it has the best support for Web RTC
+> Latest Chrome version is currently recommended since it has the best support for Web RTC
 > Firefox and Chrome Ice Candidates are not compatible, thus you can't share videos or files between those browsers
 
 ###Technologies
