@@ -201,7 +201,7 @@ Template.chat.helpers({
 });
 
 Template.chat.events({
-    'input .user-message': function(e, tmpl){
+    'keyup .user-message': function(e, tmpl){
         if(e.keyCode === 13){
             Session.set('sendingMessage', Session.get('sendingMessage')+1);
             Meteor.call('sendMessage', {
