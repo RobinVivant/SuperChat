@@ -23,7 +23,7 @@ This is a **chat webapp**, also allowing to start multiple **video conversations
 ###Technologies
 
 - **Meteor** : https://www.meteor.com/
-Client-side and server-side realtime reactive framework, with embedded MongoDB
+Client-side and server-side realtime reactive framework, with embedded MongoDB.
 Packages used :
 	- iron:router
 	- less
