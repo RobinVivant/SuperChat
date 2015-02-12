@@ -61,9 +61,9 @@ If you want to contribute to the project you are very welcomed, just submit a pu
 ###Authors
 Initiated as a school project at Polytech' Nice-Sophia Antipolis, France.
 
-*Nancy Fong*
-*Swan Jumelle*
-*Antoine Lavail*
-*Thomas Montana*
+*Nancy Fong*,
+*Swan Jumelle*,
+*Antoine Lavail*,
+*Thomas Montana*,
 *Robin Vivant*
 
