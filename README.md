@@ -41,8 +41,8 @@ Display of chat members location on a dynamic map
 
 If you want to contribute to the project you are very welcomed, just submit a pull requests!
 
-- /**WebRTCPeersChannel.js** : Meteor Stream (package arunoda:streams) dedicated to Web RTC signaling
-- - /**Routes.js** : routes definition (Iron Router)
+- /**WebRTCPeersChannel.js** : A Meteor stream (package arunoda:streams) for Web RTC signaling
+- /**Routes.js** : routes definition (Iron Router)
 - /**client**/ : files sent and executed on the clients
 - /client/**components**/ : templates used as UI components
 - /client/**layouts**/ : templates used as UI layouts
