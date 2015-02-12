@@ -22,11 +22,16 @@ Meteor.methods({
         return true;
     },
     'updateUserLoc': function(room, token, pos){
-        if( !pos || Users.findOne({token: token, room: room}))
+
+        if( !pos || !Users.findOne({token: token, room: room}))
             return false;
+
         Users.update({token: token, room: room}, {
             $set:{
-                geoPos: pos
+                geoPos: {
+                    latitude: pos.latitude,
+                    longitude: pos.longitude
+                }
             }
         });
         return true;

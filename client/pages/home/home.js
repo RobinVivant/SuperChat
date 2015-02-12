@@ -170,6 +170,7 @@ Template.home.created = function(){
                 } else {
                     Session.set('userId', result._id);
                     navigator.geolocation.getCurrentPosition(function (pos) {
+                        console.log(Session.get('roomId'));
                         Meteor.call('updateUserLoc', Session.get('roomId'), localStorage.token, pos.coords );
                     });
                 }

@@ -88,7 +88,7 @@ Template.users.created = function(){
     });
 
     Tracker.autorun(function(){
-        if( Session.get('maps-script-loaded') && google && google.maps) {
+        if( Session.get('maps-script-loaded') ) {
             Meteor.defer(function(){
                 userMap = new google.maps.Map(document.getElementById("map-canvas"), {
                     zoom: 8,
@@ -102,10 +102,13 @@ Template.users.created = function(){
     Tracker.autorun(function() {
         if(!Session.get('selectedUser')){
             Session.set('selectedUser', Session.get('userId'));
+            if( !Session.get('userId') )
+                return;
         }
 
         var user = Users.findOne({_id: Session.get('selectedUser')});
-        if( !user || !Session.get('maps-api-loaded') || !google  )
+
+        if( !user || !Session.get('maps-api-loaded') || !window.google  )
             return;
 
         var userPos = new google.maps.LatLng(user.geoPos.latitude, user.geoPos.longitude);
